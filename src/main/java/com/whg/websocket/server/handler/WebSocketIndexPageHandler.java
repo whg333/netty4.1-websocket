@@ -38,8 +38,6 @@ import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
-import com.whg.websocket.server.WebSocketServerIndexPage;
-
 /**
  * Outputs index page content.
  */
