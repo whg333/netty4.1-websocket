@@ -1,0 +1,18 @@
+/target/
+/bin/
+
+# Idea
+.idea
+*.iml
+
+# Maven
+target/
+
+# Vim
+*.swp
+/bin/
+
+# Eclipse
+.settings/
+.classpath
+.project
