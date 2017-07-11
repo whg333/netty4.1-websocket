@@ -17,16 +17,37 @@ package com.whg.websocket.server.handler;
 
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.whg.util.json.JSONUtil;
+import com.whg.websocket.server.framework.Dispatcher;
+import com.whg.websocket.server.framework.GlobalServer;
+import com.whg.websocket.server.framework.SynPlayer;
+import com.whg.websocket.server.framework.request.JsonRequest;
+import com.whg.websocket.server.framework.request.Request;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketFrameHandler.class);
+    
+    private final Dispatcher dispatcher;
+    private final GlobalServer globalServer;
+    
+    public WebSocketFrameHandler(Dispatcher dispatcher, GlobalServer globalServer) {
+		this.dispatcher = dispatcher;
+		this.globalServer = globalServer;
+	}
+	
+	@Override
+	public void channelActive(ChannelHandlerContext ctx) throws Exception {
+		globalServer.addConnect(new SynPlayer(ctx));
+	}
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
@@ -37,9 +58,22 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
              throw new UnsupportedOperationException(message);
     	}
     	
-        // Send the uppercase string back.
+    	// Send the uppercase string back.
         String request = ((TextWebSocketFrame) frame).text();
         logger.info("{} received {}", ctx.channel(), request);
         ctx.channel().writeAndFlush(new TextWebSocketFrame(request.toLowerCase(Locale.US)));
+        
+        handle(ctx, request);
+    }
+    
+    private void handle(ChannelHandlerContext ctx, String request){
+        SynPlayer player =  ctx.channel().attr(SynPlayer.Player).get();
+        if(player == null){
+        	//throw new BusinessException("not exist player!");
+        	throw new RuntimeException("not exist player!");
+        }
+        
+        Request wsRequest = JSONUtil.fromJSON(request, JsonRequest.class);
+        dispatcher.dispatch(player, wsRequest);
     }
 }

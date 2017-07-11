@@ -15,6 +15,10 @@
  */
 package com.whg.websocket.server;
 
+import org.springframework.context.ApplicationContext;
+
+import com.whg.websocket.server.framework.Dispatcher;
+import com.whg.websocket.server.framework.GlobalServer;
 import com.whg.websocket.server.handler.WebSocketFrameHandler;
 import com.whg.websocket.server.handler.WebSocketIndexPageHandler;
 
@@ -27,16 +31,16 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
 import io.netty.handler.ssl.SslContext;
 
-/**
- */
 public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel> {
 
     private static final String WEBSOCKET_PATH = "/websocket";
 
     private final SslContext sslCtx;
+    private final ApplicationContext ac;
 
-    public WebSocketServerInitializer(SslContext sslCtx) {
+    public WebSocketServerInitializer(SslContext sslCtx, ApplicationContext ac) {
         this.sslCtx = sslCtx;
+        this.ac = ac;
     }
 
     @Override
@@ -50,6 +54,6 @@ public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel
         pipeline.addLast(new WebSocketServerCompressionHandler());
         pipeline.addLast(new WebSocketServerProtocolHandler(WEBSOCKET_PATH, null, true));
         pipeline.addLast(new WebSocketIndexPageHandler(WEBSOCKET_PATH));
-        pipeline.addLast(new WebSocketFrameHandler());
+        pipeline.addLast(new WebSocketFrameHandler(new Dispatcher(ac), new GlobalServer()));
     }
 }

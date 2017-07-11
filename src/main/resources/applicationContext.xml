@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+	        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+	        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+	        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd
+	        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd
+	        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
+	<context:annotation-config />
+	<!-- 扫描所有com.whg目录下的Java类，关注带有注解的类配置，交由Spring的IoC容器管理 -->
+	<!-- 注解类如果有依赖其他自动注入@Autowired的字段属性，则会初始化所依赖的注解类，单例Bean有循环依赖的问题Spring也解决了 -->
+	<context:component-scan base-package="com.whg">
+		<context:include-filter type="annotation" expression="org.aspectj.lang.annotation.Aspect"/>
+	</context:component-scan>
+	<!-- 激活AOP切面功能,但必须配合上面context:include-filter一起已经@Aspect类中的@Around使用 -->
+	<aop:aspectj-autoproxy/>
+
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<!-- 
+				<value>${admin.config}</value>
+				 -->
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:mybatis/h2/jdbc.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<import resource="classpath:mybatis/jdbc.xml" />
+	 -->
+
+</beans>

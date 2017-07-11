@@ -15,6 +15,9 @@
  */
 package com.whg.websocket.server;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
@@ -49,9 +52,15 @@ public final class WebSocketServer {
 
     static final boolean SSL = System.getProperty("ssl") != null;
     static final int PORT = Integer.parseInt(System.getProperty("port", SSL? "8443" : "8080"));
+    
+    private final ApplicationContext ac;
+    
+    public WebSocketServer(ApplicationContext ac) {
+		this.ac = ac;
+	}
 
-    public static void main(String[] args) throws Exception {
-        // Configure SSL.
+    public void start() throws Exception {
+    	// Configure SSL.
         final SslContext sslCtx;
         if (SSL) {
             SelfSignedCertificate ssc = new SelfSignedCertificate();
@@ -67,7 +76,7 @@ public final class WebSocketServer {
             b.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class)
              .handler(new LoggingHandler(LogLevel.INFO))
-             .childHandler(new WebSocketServerInitializer(sslCtx));
+             .childHandler(new WebSocketServerInitializer(sslCtx, ac));
 
             Channel ch = b.bind(PORT).sync().channel();
 
@@ -80,4 +89,10 @@ public final class WebSocketServer {
             workerGroup.shutdownGracefully();
         }
     }
+    
+    public static void main(String[] args) throws Exception{
+		ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
+		new WebSocketServer(ac).start();
+    }
+    
 }
