@@ -25,20 +25,15 @@ public class FastMethodInvoker implements MethodInvoker{
 
 	@Override
 	public void invoke(Object[] args) {
-		if (args.length != this.argsLength) {
+		if (args.length != argsLength) {
 			throw new IllegalArgumentException("ServiceMethod Mismatch args length! ServiceMethod=" + name
-					+ " expect " + (this.argsLength - 1) + " but Front Pass actual " + (args.length - 1));
+					+ " expect " + (argsLength - 1) + " but Front Pass actual " + (args.length - 1));
 		}
 		try {
-			this.fastMethod.invoke(this.service, args);
+			fastMethod.invoke(service, args);
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public String toString() {
-		return /*name + ":" + */service.getClass().getName() + "." + fastMethod.getName();
 	}
 
 }

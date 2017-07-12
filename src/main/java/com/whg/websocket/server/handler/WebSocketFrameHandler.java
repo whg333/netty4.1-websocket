@@ -63,7 +63,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
     	// Send the uppercase string back.
         String request = ((TextWebSocketFrame) frame).text();
         logger.info("{} received {}", ctx.channel(), request);
-        ctx.channel().writeAndFlush(new TextWebSocketFrame(request.toLowerCase(Locale.US)));
+        ctx.channel().writeAndFlush(new TextWebSocketFrame(request));
         
         handle(ctx, request);
     }

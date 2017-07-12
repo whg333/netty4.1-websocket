@@ -18,6 +18,8 @@ package com.whg.websocket.server;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.whg.util.exception.ErrorCode;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
@@ -50,8 +52,8 @@ import io.netty.handler.ssl.util.SelfSignedCertificate;
  */
 public final class WebSocketServer {
 
-    static final boolean SSL = System.getProperty("ssl") != null;
-    static final int PORT = Integer.parseInt(System.getProperty("port", SSL? "8443" : "8080"));
+    private static final boolean SSL = System.getProperty("ssl") != null;
+    private static final int PORT = Integer.parseInt(System.getProperty("port", SSL? "8443" : "8080"));
     
     private final ApplicationContext ac;
     

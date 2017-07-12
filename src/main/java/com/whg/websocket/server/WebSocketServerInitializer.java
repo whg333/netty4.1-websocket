@@ -21,6 +21,7 @@ import com.whg.websocket.server.framework.Dispatcher;
 import com.whg.websocket.server.framework.GlobalServer;
 import com.whg.websocket.server.handler.WebSocketFrameHandler;
 import com.whg.websocket.server.handler.WebSocketIndexPageHandler;
+import com.whg.websocket.server.handler.WebSocketJsonEncoder;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -37,11 +38,15 @@ public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel
 
     private final SslContext sslCtx;
     
-    private final WebSocketFrameHandler wsHandler;
+    private final WebSocketIndexPageHandler wsIndexHandler;
+    private final WebSocketFrameHandler wsFrameHandler;
+    private final WebSocketJsonEncoder wsJsonEncoder;
 
     public WebSocketServerInitializer(SslContext sslCtx, ApplicationContext ac) {
         this.sslCtx = sslCtx;
-        this.wsHandler = new WebSocketFrameHandler(new Dispatcher(ac), new GlobalServer());
+        this.wsIndexHandler = new WebSocketIndexPageHandler(WEBSOCKET_PATH);
+        this.wsFrameHandler = new WebSocketFrameHandler(new Dispatcher(ac), new GlobalServer());
+        this.wsJsonEncoder = new WebSocketJsonEncoder();
     }
 
     @Override
@@ -54,7 +59,10 @@ public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel
         pipeline.addLast(new HttpObjectAggregator(65536));
         pipeline.addLast(new WebSocketServerCompressionHandler());
         pipeline.addLast(new WebSocketServerProtocolHandler(WEBSOCKET_PATH, null, true));
-        pipeline.addLast(new WebSocketIndexPageHandler(WEBSOCKET_PATH));
-        pipeline.addLast(wsHandler);
+        
+        pipeline.addLast(wsIndexHandler);
+        pipeline.addLast(wsFrameHandler);
+        
+        pipeline.addLast(wsJsonEncoder);
     }
 }
