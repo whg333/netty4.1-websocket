@@ -6,7 +6,7 @@
 
 	<context-param>
 		<param-name>webAppRootKey</param-name>
-		<param-value>dragonComming</param-value>
+		<param-value>chessCard</param-value>
 	</context-param>
 	<context-param>
 		<param-name>log4jConfigLocation</param-name>
@@ -37,7 +37,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>spring-web</servlet-name>
-		<url-pattern>*.do</url-pattern> 
+		<url-pattern>*.cc</url-pattern> 
 	</servlet-mapping>
 
 	<!--

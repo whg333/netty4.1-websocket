@@ -10,14 +10,14 @@ import org.springframework.cglib.reflect.FastClass;
 import org.springframework.cglib.reflect.FastMethod;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.alibaba.fastjson.JSON;
 import com.esotericsoftware.reflectasm.MethodAccess;
-import com.whg.util.time.TimeUtil;
 import com.whg.websocket.server.framework.exception.ExceptionHandler;
-import com.whg.websocket.server.framework.method.MethodInvoker;
 import com.whg.websocket.server.framework.method.FastMethodInvoker;
 import com.whg.websocket.server.framework.method.MethodAccessInvoker;
+import com.whg.websocket.server.framework.method.MethodInvoker;
 import com.whg.websocket.server.framework.request.Request;
 
 public class Dispatcher {
@@ -43,15 +43,15 @@ public class Dispatcher {
 			Object service = entry.getValue();
 			Class<?> serviceClass = service.getClass();
 			String name = serviceClass.getSimpleName();
-			if(name.contains("Domain")){ //过滤掉带有Domain的领域Service
+			if(name.contains("Domain")){ //过滤掉带有Domain名称的领域Service
 				continue;
 			}
 			
 			if(useReflectASM){
 				MethodAccess access = MethodAccess.get(serviceClass);
 				for(String methodName:access.getMethodNames()){
-					MethodInvoker methodInvoker = new MethodAccessInvoker(serviceName, methodName, service, access);;
-					methodInvokerMap.put(methodInvoker.name(), methodInvoker);
+					MethodInvoker methodInvoker = new MethodAccessInvoker(serviceName, methodName, service, access);
+					Assert.isNull(methodInvokerMap.put(methodInvoker.name(), methodInvoker));
 				}
 			}else{
 				Method[] methods = serviceClass.getDeclaredMethods();
@@ -60,7 +60,7 @@ public class Dispatcher {
 					FastClass fastClass = FastClass.create(serviceClass);
 					FastMethod fastMethod = fastClass.getMethod(methodName, method.getParameterTypes());
 					FastMethodInvoker serviceMethod = new FastMethodInvoker(serviceName, methodName, service, fastMethod);
-					methodInvokerMap.put(serviceMethod.name(), serviceMethod);
+					Assert.isNull(methodInvokerMap.put(serviceMethod.name(), serviceMethod));
 				}
 			}
 		}
@@ -73,10 +73,10 @@ public class Dispatcher {
 		System.arraycopy(srcArgs, 0, destArgs, 1, srcArgs.length);
 		destArgs[0] = player;
 
-		String name = wsRequest.serviceMethod();
-		MethodInvoker methodInvoker = methodInvokerMap.get(name);
+		String serviceMethod = wsRequest.serviceMethod();
+		MethodInvoker methodInvoker = methodInvokerMap.get(serviceMethod);
 		if (methodInvoker == null) {
-			throw new UnsupportedOperationException("Unsupported methodInvoker:"+name);
+			throw new UnsupportedOperationException("Unsupported methodInvoker:"+serviceMethod);
 		}
 		
 		//TODO 暂时别注掉，主要用于调试，验证前端调用的接口
@@ -84,9 +84,7 @@ public class Dispatcher {
 		System.err.println(JSON.toJSONString(wsRequest)+" --> "+methodInvoker);
 		
 		try {
-			long begin = TimeUtil.currentTimeMillis();
 			methodInvoker.invoke(destArgs);
-			System.out.println(TimeUtil.currentTimeMillis()-begin);
 		} catch (Exception e) {
 			exceptionHandler.handleException(player, e);
 		}

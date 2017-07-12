@@ -22,6 +22,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -41,6 +42,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 /**
  * Outputs index page content.
  */
+@Sharable
 public class WebSocketIndexPageHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     private final String websocketPath;
