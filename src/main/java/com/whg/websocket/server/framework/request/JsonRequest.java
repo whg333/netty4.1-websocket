@@ -1,6 +1,6 @@
 package com.whg.websocket.server.framework.request;
 
-import com.whg.websocket.server.framework.ServiceMethod;
+import com.whg.websocket.server.framework.method.MethodInvoker;
 
 public class JsonRequest implements Request{
 
@@ -18,7 +18,7 @@ public class JsonRequest implements Request{
 	}
 	@Override
 	public String serviceMethod() {
-		return ServiceMethod.name(s, m);
+		return MethodInvoker.name(s, m);
 	}
 	@Override
 	public Object[] args() {

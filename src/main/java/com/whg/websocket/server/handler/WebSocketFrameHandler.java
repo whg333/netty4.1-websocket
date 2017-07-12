@@ -20,7 +20,7 @@ import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.whg.util.json.JSONUtil;
+import com.alibaba.fastjson.JSON;
 import com.whg.websocket.server.framework.Dispatcher;
 import com.whg.websocket.server.framework.GlobalServer;
 import com.whg.websocket.server.framework.SynPlayer;
@@ -29,9 +29,11 @@ import com.whg.websocket.server.framework.request.Request;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 
+@Sharable
 public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketFrameHandler.class);
@@ -73,7 +75,8 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         	throw new RuntimeException("not exist player!");
         }
         
-        Request wsRequest = JSONUtil.fromJSON(request, JsonRequest.class);
+        //Request wsRequest = JSONUtil.fromJSON(request, JsonRequest.class);
+        Request wsRequest = JSON.parseObject(request, JsonRequest.class);
         dispatcher.dispatch(player, wsRequest);
     }
 }
