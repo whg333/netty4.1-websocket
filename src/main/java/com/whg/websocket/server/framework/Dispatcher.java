@@ -14,6 +14,7 @@ import org.springframework.util.Assert;
 
 import com.alibaba.fastjson.JSON;
 import com.esotericsoftware.reflectasm.MethodAccess;
+import com.whg.util.reflect.AopTargetUtil;
 import com.whg.websocket.server.framework.exception.ExceptionHandler;
 import com.whg.websocket.server.framework.method.FastMethodInvoker;
 import com.whg.websocket.server.framework.method.MethodAccessInvoker;
@@ -40,7 +41,10 @@ public class Dispatcher {
 		Map<String, Object> serviceMap = ac.getBeansWithAnnotation(Service.class);
 		for(Map.Entry<String, Object> entry:serviceMap.entrySet()){
 			String serviceName = entry.getKey();
-			Object service = entry.getValue();
+			Object serviceProxy = entry.getValue();
+			Object service = AopTargetUtil.getTarget(serviceProxy);
+			
+			Class<?> serviceProxyClass = serviceProxy.getClass();
 			Class<?> serviceClass = service.getClass();
 			String name = serviceClass.getSimpleName();
 			if(name.contains("Domain")){ //过滤掉带有Domain名称的领域Service
@@ -50,16 +54,16 @@ public class Dispatcher {
 			if(useReflectASM){
 				MethodAccess access = MethodAccess.get(serviceClass);
 				for(String methodName:access.getMethodNames()){
-					MethodInvoker methodInvoker = new MethodAccessInvoker(serviceName, methodName, service, access);
+					MethodInvoker methodInvoker = new MethodAccessInvoker(serviceName, methodName, serviceProxy, access);
 					Assert.isNull(methodInvokerMap.put(methodInvoker.name(), methodInvoker));
 				}
 			}else{
 				Method[] methods = serviceClass.getDeclaredMethods();
 				for (Method method : methods) {
 					String methodName = method.getName();
-					FastClass fastClass = FastClass.create(serviceClass);
+					FastClass fastClass = FastClass.create(serviceProxyClass);
 					FastMethod fastMethod = fastClass.getMethod(methodName, method.getParameterTypes());
-					FastMethodInvoker serviceMethod = new FastMethodInvoker(serviceName, methodName, service, fastMethod);
+					FastMethodInvoker serviceMethod = new FastMethodInvoker(serviceName, methodName, serviceProxy, fastMethod);
 					Assert.isNull(methodInvokerMap.put(serviceMethod.name(), serviceMethod));
 				}
 			}
