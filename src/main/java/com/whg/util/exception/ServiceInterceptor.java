@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.whg.util.time.DateUtil;
 import com.whg.util.time.TimeUtil;
-import com.whg.websocket.server.framework.SynPlayer;
+import com.whg.websocket.server.framework.Player;
 import com.whg.websocket.server.framework.method.MethodInvoker;
 
 /**
@@ -65,8 +65,8 @@ public class ServiceInterceptor {
         } finally {
         	Object[] args = invocation.getArgs();
         	Object player = args[0];
-        	if(player instanceof SynPlayer){
-        		((SynPlayer)player).write(result);
+        	if(player instanceof Player){
+        		((Player)player).write(result);
         	}
         	
         	//OperationContext.removeOperation();

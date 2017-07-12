@@ -9,17 +9,19 @@ import org.springframework.stereotype.Service;
 
 import com.whg.backend.bo.user.User;
 import com.whg.backend.service.UserService;
+import com.whg.util.annotation.GlobalScope;
 import com.whg.util.exception.BusinessException;
 import com.whg.util.exception.ErrorCode;
-import com.whg.websocket.server.framework.SynPlayer;
+import com.whg.websocket.server.framework.Player;
 
+@GlobalScope
 @Service("userService")
 public class UserServiceImpl implements UserService {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 	
 	@Override
-	public Map<String, Object> login(SynPlayer player, String openid, String token) {
+	public Map<String, Object> login(Player player, String openid, String token) {
 		logger.info("login({}, {})", openid, token);
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("user", new User(1001, "whg"));
@@ -27,7 +29,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Map<String, Object> createRoom(SynPlayer player, int roomType) {
+	public Map<String, Object> createRoom(Player player, int roomType) {
 		logger.info("createRoom({}, {})", player, roomType);
 		Map<String, Object> result = new HashMap<String, Object>();
 		//return result;
@@ -35,7 +37,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Map<String, Object> joinRoom(SynPlayer player, int roomNumber) {
+	public Map<String, Object> joinRoom(Player player, int roomNumber) {
 		logger.info("joinRoom({}, {})", player, roomNumber);
 		Map<String, Object> result = new HashMap<String, Object>();
 		//return result;

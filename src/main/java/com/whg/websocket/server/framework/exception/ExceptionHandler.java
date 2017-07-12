@@ -1,9 +1,9 @@
 package com.whg.websocket.server.framework.exception;
 
-import com.whg.websocket.server.framework.SynPlayer;
+import com.whg.websocket.server.framework.Player;
 
 public interface ExceptionHandler {
 
-	void handleException(SynPlayer player, Throwable t);
+	void handleException(Player player, Throwable t);
 	
 }

@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 import com.whg.websocket.server.framework.Dispatcher;
 import com.whg.websocket.server.framework.GlobalServer;
-import com.whg.websocket.server.framework.SynPlayer;
+import com.whg.websocket.server.framework.Player;
 import com.whg.websocket.server.framework.request.JsonRequest;
 import com.whg.websocket.server.framework.request.Request;
 
@@ -48,7 +48,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
 	
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		globalServer.addConnect(new SynPlayer(ctx));
+		globalServer.addConnect(new Player(ctx));
 	}
 
     @Override
@@ -69,7 +69,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
     }
     
     private void handle(ChannelHandlerContext ctx, String request){
-        SynPlayer player =  ctx.channel().attr(SynPlayer.Player).get();
+        Player player =  ctx.channel().attr(Player.key).get();
         if(player == null){
         	//throw new BusinessException("not exist player!");
         	throw new RuntimeException("not exist player!");

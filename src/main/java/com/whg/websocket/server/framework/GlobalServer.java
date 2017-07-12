@@ -8,14 +8,14 @@ import org.springframework.util.Assert;
 @Component
 public class GlobalServer {
 
-	private final ConcurrentHashMap<Integer, SynPlayer> connectPlayers = new ConcurrentHashMap<Integer, SynPlayer>();
-	private final ConcurrentHashMap<Integer, SynPlayer> loginPlayers = new ConcurrentHashMap<Integer, SynPlayer>();
+	private final ConcurrentHashMap<Integer, Player> connectPlayers = new ConcurrentHashMap<Integer, Player>();
+	private final ConcurrentHashMap<Integer, Player> loginPlayers = new ConcurrentHashMap<Integer, Player>();
 
-	public boolean addConnect(SynPlayer synPlayer) {
-		return null == this.connectPlayers.putIfAbsent(synPlayer.getPlayerId(), synPlayer);
+	public boolean addConnect(Player player) {
+		return null == this.connectPlayers.putIfAbsent(player.getPlayerId(), player);
 	}
 
-	public SynPlayer getConnect(int id) {
+	public Player getConnect(int id) {
 		return connectPlayers.get(id);
 	}
 	
@@ -23,15 +23,15 @@ public class GlobalServer {
 		return null != connectPlayers.remove(id);
 	}
 
-	public ConcurrentHashMap<Integer, SynPlayer> connectPlayers() {
+	public ConcurrentHashMap<Integer, Player> connectPlayers() {
 		return connectPlayers;
 	}
 
-	public boolean addLogin(int userId, SynPlayer synPlayer){
-		return null == loginPlayers.putIfAbsent(userId, synPlayer);
+	public boolean addLogin(int userId, Player player){
+		return null == loginPlayers.putIfAbsent(userId, player);
 	}
 	
-	public SynPlayer getLogin(int id) {
+	public Player getLogin(int id) {
 		return loginPlayers.get(id);
 	}
 
@@ -39,13 +39,13 @@ public class GlobalServer {
 		return null != loginPlayers.remove(id);
 	}
 	
-	public ConcurrentHashMap<Integer, SynPlayer> loginPlayers() {
+	public ConcurrentHashMap<Integer, Player> loginPlayers() {
 		return loginPlayers;
 	}
 
 	
-	public SynPlayer replaceLogin(int userId, SynPlayer player){
-		SynPlayer loginPlayer = loginPlayers.remove(userId);
+	public Player replaceLogin(int userId, Player player){
+		Player loginPlayer = loginPlayers.remove(userId);
 		Assert.notNull(loginPlayer);
 		Assert.isTrue(player.getPlayerId() != loginPlayer.getPlayerId());
 		Assert.isTrue(userId == loginPlayer.getUserId());

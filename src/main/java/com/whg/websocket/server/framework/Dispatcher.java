@@ -9,11 +9,11 @@ import java.util.Set;
 import org.springframework.cglib.reflect.FastClass;
 import org.springframework.cglib.reflect.FastMethod;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.alibaba.fastjson.JSON;
 import com.esotericsoftware.reflectasm.MethodAccess;
+import com.whg.util.annotation.GlobalScope;
 import com.whg.websocket.server.framework.exception.ExceptionHandler;
 import com.whg.websocket.server.framework.method.FastMethodInvoker;
 import com.whg.websocket.server.framework.method.MethodAccessInvoker;
@@ -35,7 +35,7 @@ public class Dispatcher {
 	}
 	
 	private void initServiceMethodMap(ApplicationContext ac){
-		Map<String, Object> serviceMap = ac.getBeansWithAnnotation(Service.class);
+		Map<String, Object> serviceMap = ac.getBeansWithAnnotation(GlobalScope.class);
 		for(Map.Entry<String, Object> entry:serviceMap.entrySet()){
 			String serviceName = entry.getKey();
 			Object service = entry.getValue();
@@ -75,7 +75,7 @@ public class Dispatcher {
 		}
 	}
 
-	public void dispatch(SynPlayer player, Request wsRequest) {
+	public void dispatch(Player player, Request wsRequest) {
 		Object[] srcArgs = wsRequest.args();
 		Object[] destArgs = new Object[srcArgs.length + 1];
 		System.arraycopy(srcArgs, 0, destArgs, 1, srcArgs.length);

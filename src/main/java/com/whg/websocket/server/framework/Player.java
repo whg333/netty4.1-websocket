@@ -14,9 +14,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.util.AttributeKey;
 
-public class SynPlayer {
+public class Player {
 
-	public static final AttributeKey<SynPlayer> Player = AttributeKey.valueOf("synPlayer");
+	public static final AttributeKey<Player> key = AttributeKey.valueOf("key");
 	
 	public enum NetState{
 		connect, 
@@ -28,15 +28,15 @@ public class SynPlayer {
 	
 	private final Channel channel;
 	
-	private AtomicReference<NetState> userNet = new AtomicReference<SynPlayer.NetState>();
+	private AtomicReference<NetState> userNet = new AtomicReference<Player.NetState>();
 	private AtomicLong lastUpdateHeart = new AtomicLong();
 	private AtomicBoolean repeatLogin = new AtomicBoolean(false);
 	
 	private UserInfo userInfo;
 	
-	public SynPlayer(ChannelHandlerContext ctx) {
+	public Player(ChannelHandlerContext ctx) {
 		this.channel = ctx.channel();
-		this.channel.attr(Player).set(this);
+		this.channel.attr(key).set(this);
 		this.userNet.set(NetState.connect);
 		this.lastUpdateHeart.set(TimeUtil.currentTimeMillis());
 	}
@@ -74,7 +74,7 @@ public class SynPlayer {
 	}
 	
 	public void destory() {
-		channel.attr(Player).set(null);
+		channel.attr(key).set(null);
 		Assert.isTrue(userNet.compareAndSet(NetState.connect, NetState.disconnect));
 	}
 	
