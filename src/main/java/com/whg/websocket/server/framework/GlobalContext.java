@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 @Component
-public class GlobalServer {
+public class GlobalContext {
 
 	private final ConcurrentHashMap<Integer, Player> connectPlayers = new ConcurrentHashMap<Integer, Player>();
 	private final ConcurrentHashMap<Integer, Player> loginPlayers = new ConcurrentHashMap<Integer, Player>();

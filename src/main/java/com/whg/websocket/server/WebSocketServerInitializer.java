@@ -17,8 +17,6 @@ package com.whg.websocket.server;
 
 import org.springframework.context.ApplicationContext;
 
-import com.whg.websocket.server.framework.Dispatcher;
-import com.whg.websocket.server.framework.GlobalServer;
 import com.whg.websocket.server.handler.WebSocketFrameHandler;
 import com.whg.websocket.server.handler.WebSocketIndexPageHandler;
 import com.whg.websocket.server.handler.WebSocketJsonEncoder;
@@ -45,7 +43,7 @@ public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel
     public WebSocketServerInitializer(SslContext sslCtx, ApplicationContext ac) {
         this.sslCtx = sslCtx;
         this.wsIndexHandler = new WebSocketIndexPageHandler(WEBSOCKET_PATH);
-        this.wsFrameHandler = new WebSocketFrameHandler(new Dispatcher(ac), new GlobalServer());
+        this.wsFrameHandler = new WebSocketFrameHandler(ac);
         this.wsJsonEncoder = new WebSocketJsonEncoder();
     }
 

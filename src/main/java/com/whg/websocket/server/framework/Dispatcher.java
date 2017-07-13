@@ -19,19 +19,21 @@ import com.whg.websocket.server.framework.method.FastMethodInvoker;
 import com.whg.websocket.server.framework.method.MethodAccessInvoker;
 import com.whg.websocket.server.framework.method.MethodInvoker;
 import com.whg.websocket.server.framework.request.Request;
+import com.whg.websocket.server.framework.thread.impl.GlobalThreadPool;
 
 public class Dispatcher {
 	
-	/** 是否使用ReflectASM库来执行方法调用？否的话则使用CgLib的FastMethod执行方法调用 */
-	private static final boolean useReflectASM = true;
-	
-	private final Map<String, MethodInvoker> methodInvokerMap = new HashMap<String, MethodInvoker>();
-	
+	private final GlobalThreadPool globalThreadPool;
 	private final ExceptionHandler exceptionHandler;
 	
+	/** 是否使用ReflectASM库来执行方法调用？否的话则使用CgLib的FastMethod执行方法调用 */
+	private static final boolean useReflectASM = true;
+	private final Map<String, MethodInvoker> methodInvokerMap = new HashMap<String, MethodInvoker>();
+	
 	public Dispatcher(ApplicationContext ac) {
-		this.exceptionHandler = (ExceptionHandler) ac.getBean("exceptionHandler");
-		this.initServiceMethodMap(ac);
+		globalThreadPool = (GlobalThreadPool)ac.getBean("globalThreadPool");
+		exceptionHandler = (ExceptionHandler)ac.getBean("exceptionHandler");
+		initServiceMethodMap(ac);
 	}
 	
 	private void initServiceMethodMap(ApplicationContext ac){
@@ -74,14 +76,23 @@ public class Dispatcher {
 			}
 		}
 	}
+	
+	public void dispatch(Player player, Request request){
+		globalThreadPool.execute(new Runnable(){
+			@Override
+			public void run() {
+				doDispatch(player, request);
+			}
+		});
+	}
 
-	public void dispatch(Player player, Request wsRequest) {
-		Object[] srcArgs = wsRequest.args();
+	private void doDispatch(Player player, Request request) {
+		Object[] srcArgs = request.args();
 		Object[] destArgs = new Object[srcArgs.length + 1];
 		System.arraycopy(srcArgs, 0, destArgs, 1, srcArgs.length);
 		destArgs[0] = player;
 
-		String serviceMethod = wsRequest.serviceMethod();
+		String serviceMethod = request.serviceMethod();
 		MethodInvoker methodInvoker = methodInvokerMap.get(serviceMethod);
 		if (methodInvoker == null) {
 			throw new UnsupportedOperationException("Unsupported methodInvoker:"+serviceMethod);
@@ -89,7 +100,7 @@ public class Dispatcher {
 		
 		//TODO 暂时别注掉，主要用于调试，验证前端调用的接口
 		//System.err.println(JSONUtil.toJSONwithOutNullProp(wsRequest)+" --> "+serviceMethod);
-		System.err.println(JSON.toJSONString(wsRequest)+" --> "+methodInvoker.name());
+		System.err.println(JSON.toJSONString(request)+" --> "+methodInvoker.name());
 		
 		try {
 			methodInvoker.invoke(destArgs);

@@ -1,4 +1,6 @@
-package com.whg.websocket.server.framework.thread.pool;
+package com.whg.websocket.server.framework.thread.impl;
+
+import com.whg.websocket.server.framework.thread.PoolState;
 
 class PoolStateWrapper implements PoolState {
 	

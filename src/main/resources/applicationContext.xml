@@ -33,16 +33,20 @@
 		</property>
 	</bean>
 	
-	<!-- 
 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
-				<value>classpath:mybatis/h2/jdbc.properties</value>
+				<value>classpath:${db.properties}</value>
+				<value>classpath:${platform.properties}</value>
+				<value>classpath:${jdbc.properties}</value>
+				<value>classpath:${websocket.properties}</value>
 			</list>
 		</property>
 	</bean>
-
-	<import resource="classpath:mybatis/jdbc.xml" />
+	
+	<import resource="classpath:${repo.config}" />
+	<!-- 
+	<import resource="classpath:${jdbc.config}"/>
 	 -->
 
 </beans>

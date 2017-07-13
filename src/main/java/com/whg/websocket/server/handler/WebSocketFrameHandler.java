@@ -15,21 +15,20 @@
  */
 package com.whg.websocket.server.handler;
 
-import java.util.Locale;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 
 import com.alibaba.fastjson.JSON;
 import com.whg.websocket.server.framework.Dispatcher;
-import com.whg.websocket.server.framework.GlobalServer;
+import com.whg.websocket.server.framework.GlobalContext;
 import com.whg.websocket.server.framework.Player;
 import com.whg.websocket.server.framework.request.JsonRequest;
 import com.whg.websocket.server.framework.request.Request;
 
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 
@@ -39,16 +38,16 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
     private static final Logger logger = LoggerFactory.getLogger(WebSocketFrameHandler.class);
     
     private final Dispatcher dispatcher;
-    private final GlobalServer globalServer;
+    private final GlobalContext globalContext;
     
-    public WebSocketFrameHandler(Dispatcher dispatcher, GlobalServer globalServer) {
-		this.dispatcher = dispatcher;
-		this.globalServer = globalServer;
+    public WebSocketFrameHandler(ApplicationContext ac) {
+		dispatcher = new Dispatcher(ac);
+		globalContext = (GlobalContext)ac.getBean("globalContext");
 	}
 	
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		globalServer.addConnect(new Player(ctx));
+		globalContext.addConnect(new Player(ctx));
 	}
 
     @Override

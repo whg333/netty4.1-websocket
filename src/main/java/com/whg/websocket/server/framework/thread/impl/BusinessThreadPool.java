@@ -1,4 +1,4 @@
-package com.whg.websocket.server.framework.thread.pool;
+package com.whg.websocket.server.framework.thread.impl;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -6,7 +6,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class BusinessThreadPool implements PoolState, LogicThreadPool {
+import com.whg.websocket.server.framework.thread.ThreadPool;
+import com.whg.websocket.server.framework.thread.PoolState;
+
+public class BusinessThreadPool implements ThreadPool, PoolState {
 	
 	private final ThreadPoolExecutor executor;
 

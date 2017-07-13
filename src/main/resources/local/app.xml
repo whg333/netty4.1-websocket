@@ -25,5 +25,25 @@
 		<constructor-arg index="1" value="${redis_reader_slaves_url}" />
 	</bean>
 	 -->
+	 
+	<bean id="webSocketConfig" class="com.whg.websocket.server.WebSocketConfig">
+	  <constructor-arg index="0" value="${tcp.port}"/>
+	  <constructor-arg index="1" value="${so.keepalive}"/>
+	  <constructor-arg index="2" value="${so.backlog}"/>
+	  <constructor-arg index="3" value="${boss.count}"/>
+	  <constructor-arg index="4" value="${worker.count}"/>
+	</bean>
+	
+	<bean id="poolConfig" class="com.whg.websocket.server.framework.thread.PoolConfig">
+	  <constructor-arg index="0" value="${global.thread.name}"/>
+	  <constructor-arg index="1" value="${global.thread.poolNum}"/>
+	  <constructor-arg index="2" value="${global.thread.minThreadNum}"/>
+	  <constructor-arg index="3" value="${global.thread.maxThreadNum}"/>
+	  <constructor-arg index="4" value="${global.thread.queueTaskNum}"/>
+	</bean>
+	
+	<bean id="globalThreadPool" class="com.whg.websocket.server.framework.thread.impl.GlobalThreadPool">
+	  <constructor-arg index="0" ref="poolConfig"/>
+	</bean>
 
 </beans>

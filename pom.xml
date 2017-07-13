@@ -101,6 +101,7 @@
 				<repo.config>${dir.name}/app.xml</repo.config>
 				<jdbc.properties>${dir.name}/jdbc.properties</jdbc.properties>
 				<jdbc.config>${dir.name}/jdbc.xml</jdbc.config>
+				<websocket.properties>${dir.name}/websocket.properties</websocket.properties>
 				<projectName>chessCard</projectName>
 			</properties>
 		</profile>
@@ -121,6 +122,7 @@
 				<repo.config>${dir.name}/app.xml</repo.config>
 				<jdbc.properties>${dir.name}/jdbc.properties</jdbc.properties>
 				<jdbc.config>${dir.name}/jdbc.xml</jdbc.config>
+				<websocket.properties>${dir.name}/websocket.properties</websocket.properties>
 				<projectName>oldteng</projectName>
 			</properties>
 		</profile>
@@ -140,6 +142,7 @@
 				<repo.config>${dir.name}/app.xml</repo.config>
 				<jdbc.properties>${dir.name}/jdbc.properties</jdbc.properties>
 				<jdbc.config>${dir.name}/jdbc.xml</jdbc.config>
+				<websocket.properties>${dir.name}/websocket.properties</websocket.properties>
 				<projectName>outtest</projectName>
 			</properties>
 		</profile>
