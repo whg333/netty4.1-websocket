@@ -136,9 +136,6 @@ public enum ErrorCode {
 	}
 	
 	private static final IntHashMap<ErrorCode> map = new IntHashMap<ErrorCode>();
-	static{
-		init();
-	}
 	
     public static void init() {
     	ErrorCode[] values = values();

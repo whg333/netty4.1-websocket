@@ -24,6 +24,13 @@
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
+	
+	<!-- 启动Servlet载入静态数据   -->
+	<servlet>
+		<servlet-name>LoadStaticDataServlet</servlet-name>
+		<servlet-class>com.whg.web.BootStrapServlet</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
 
 	<!-- 配置页面跳转，映射所有form结尾的请求 -->
 	<servlet>

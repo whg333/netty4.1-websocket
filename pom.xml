@@ -4,7 +4,6 @@
     <groupId>com.whg</groupId>
     <artifactId>netty4-websocket-spring4</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>netty4-websocket-spring4</name>
     <packaging>war</packaging>
     <properties>
     	<netty.version>4.1.12.Final</netty.version>
@@ -12,17 +11,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
     <build>
-		<finalName>netty4-websocket-spring4</finalName>
+		<finalName>${projectName}</finalName>
 	    <plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.3</version>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.3</version>
@@ -49,7 +39,111 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		
+		<!-- 必须得有resources和testResources，否则maven使用profile打包（package）的时候占位符不起作用 -->
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>${dir.name}/**</include>
+					<include>com/**</include>
+					<include>spring/*</include>
+					<include>*</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>applicationContext.xml</include>
+					<include>constant_file.properties</include>
+				</includes>
+			</resource>
+		</resources>
+		
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<includes>
+					<include>applicationContext.xml</include>
+					<include>com/**</include>
+					<include>*</include>
+				</includes>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>applicationContext.xml</include>
+				</includes>
+			</testResource>
+		</testResources>
 	</build>
+	
+	<profiles>
+		<!-- by default, local profile will be used, if you want to use other 
+			profiles, please add -PprofileId to your mvn command. 
+			eg:mvn -Pouttest clean compile package -->
+		<profile>
+			<!-- 请每个开发人员都自己分支local目录，修改*.properties和app.xml为适合自己本机的配置， 不允许再在pom内部定义自己本机的profile，以免影响他人 -->
+			<id>local</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>local</value>
+				</property>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<dir.name>local</dir.name>
+				<db.properties>${dir.name}/db.properties</db.properties>
+				<platform.properties>${dir.name}/platform.properties</platform.properties>
+				<repo.config>${dir.name}/app.xml</repo.config>
+				<jdbc.properties>${dir.name}/jdbc.properties</jdbc.properties>
+				<jdbc.config>${dir.name}/jdbc.xml</jdbc.config>
+				<projectName>chessCard</projectName>
+			</properties>
+		</profile>
+		<profile>
+			<!-- 腾讯有朋友社区和qzone社区两个平台，分别对应platform_pengyou.properties和platform_qzone.properties 
+				服务端部署脚本应当用其中一个文件覆盖platform.properties，才能正常使用。默认是qzone社区。 -->
+			<id>oldteng</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>oldteng</value>
+				</property>
+			</activation>
+			<properties>
+				<dir.name>oldteng</dir.name>
+				<db.properties>${dir.name}/db.properties</db.properties>
+				<platform.properties>${dir.name}/platform.properties</platform.properties>
+				<repo.config>${dir.name}/app.xml</repo.config>
+				<jdbc.properties>${dir.name}/jdbc.properties</jdbc.properties>
+				<jdbc.config>${dir.name}/jdbc.xml</jdbc.config>
+				<projectName>oldteng</projectName>
+			</properties>
+		</profile>
+		<profile>
+			<!-- 外网测试版配置 -->
+			<id>outtest</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>outtest</value>
+				</property>
+			</activation>
+			<properties>
+				<dir.name>outtest</dir.name>
+				<db.properties>${dir.name}/db.properties</db.properties>
+				<platform.properties>${dir.name}/platform.properties</platform.properties>
+				<repo.config>${dir.name}/app.xml</repo.config>
+				<jdbc.properties>${dir.name}/jdbc.properties</jdbc.properties>
+				<jdbc.config>${dir.name}/jdbc.xml</jdbc.config>
+				<projectName>outtest</projectName>
+			</properties>
+		</profile>
+	</profiles>
 
     <dependencies>
         <dependency>

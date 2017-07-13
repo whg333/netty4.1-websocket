@@ -27,4 +27,17 @@ public class Room {
 		return playerMap.size();
 	}
 	
+	public void notify(int playerId, Object msg){
+		Player player = findPlayer(playerId);
+		if(player != null){
+			player.write(msg);
+		}
+	}
+	
+	public void notifyAll(Object msg){
+		for(Player player:playerMap.values()){
+			player.write(msg);
+		}
+	}
+	
 }

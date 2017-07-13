@@ -32,6 +32,8 @@ public class Player {
 	private AtomicLong lastUpdateHeart = new AtomicLong();
 	private AtomicBoolean repeatLogin = new AtomicBoolean(false);
 	
+	private Room room;
+	
 	private UserInfo userInfo;
 	
 	public Player(ChannelHandlerContext ctx) {
@@ -41,27 +43,12 @@ public class Player {
 		this.lastUpdateHeart.set(TimeUtil.currentTimeMillis());
 	}
 	
-	public void write(Object obj){
-		if(channel == null || !isConnect()){
-			return;
-		}
-		channel.writeAndFlush(obj);
+	public int getPlayerId() {
+		return channel.hashCode();
 	}
 	
 	public boolean isConnect(){
 		return userNet.get() == NetState.connect;
-	}
-	
-	public void closeRepeatLogin(){
-		close(1001, "【repeat login/重复登录】");
-	}
-	
-	public void close(int statusCode, String reasonText){
-		channel.writeAndFlush(new CloseWebSocketFrame(statusCode, reasonText));
-	}
-	
-	public int getPlayerId() {
-		return channel.hashCode();
 	}
 	
 	public void repeatLogin(){
@@ -71,6 +58,21 @@ public class Player {
 	/** 是否已经重复登录 */
 	public boolean isRepeatLogin() {
 		return repeatLogin.get();
+	}
+	
+	public void closeRepeatLogin(){
+		close(1001, "【repeat login/重复登录】");
+	}
+	
+	public void close(int statusCode, String reasonText){
+		write(new CloseWebSocketFrame(statusCode, reasonText));
+	}
+	
+	public void write(Object obj){
+		if(channel == null || !channel.isOpen() || !isConnect()){
+			return;
+		}
+		channel.writeAndFlush(obj);
 	}
 	
 	public void destory() {
