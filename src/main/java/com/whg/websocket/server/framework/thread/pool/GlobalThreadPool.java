@@ -5,7 +5,7 @@ import com.whg.websocket.server.framework.thread.config.PoolConfig;
 public class GlobalThreadPool implements LogicThreadPool {
 	
 	private final int poolNum;
-	private final GlobalThreadPoolState[] pools;
+	private final BusinessThreadPool[] pools;
 	private final ThreadPoolSelector selector;
 
 	public GlobalThreadPool(PoolConfig poolConfig) {
@@ -14,33 +14,31 @@ public class GlobalThreadPool implements LogicThreadPool {
 	}
 
 	public GlobalThreadPool(int poolNum, int minThreadNum, int maxThreadNum, int queueTaskNum, String name) {
-		this(poolNum, minThreadNum, maxThreadNum, queueTaskNum, name, new TakeTurnsPoolSelector());
-	}
-
-	public GlobalThreadPool(int poolNum, int minThreadNum, int maxThreadNum, int queueTaskNum, String name,
-			ThreadPoolSelector poolSelector) {
+		if(poolNum <= 0){
+			throw new IllegalArgumentException("poolNum="+poolNum);
+		}
 		this.poolNum = poolNum;
-		this.pools = new GlobalThreadPoolState[poolNum];
+		pools = new BusinessThreadPool[poolNum];
 		for (int i = 0; i < poolNum; i++) {
-			this.pools[i] = new GlobalThreadPoolState(minThreadNum, maxThreadNum, queueTaskNum, name + "-" + i + "-");
+			pools[i] = new BusinessThreadPool(minThreadNum, maxThreadNum, queueTaskNum, name + "-business-" + i + "-");
 		}
-		poolSelector.setPoolsState(this.pools);
-		this.selector = poolSelector;
+		selector = new TakeTurnPoolSelector(this.pools);
 	}
 
-	public void excute(Runnable task) {
-		if (this.poolNum == 1) {
-			this.pools[0].execute(task);
+	@Override
+	public void execute(Runnable task) {
+		if (poolNum == 1) {
+			pools[0].execute(task);
 		} else {
-			int index = this.selector.selectPool();
-			this.pools[index].execute(task);
+			int index = selector.selectPool();
+			pools[index].execute(task);
 		}
 	}
 
-	public PoolState[] getPoolsState() {
-		PoolState[] states = new PoolState[this.pools.length];
-		for (int i = 0; i < this.pools.length; i++) {
-			states[i] = new PoolStateWrap(this.pools[i]);
+	public PoolState[] getPoolStateList() {
+		PoolState[] states = new PoolState[pools.length];
+		for (int i = 0; i < pools.length; i++) {
+			states[i] = new PoolStateWrapper(pools[i]);
 		}
 		return states;
 	}

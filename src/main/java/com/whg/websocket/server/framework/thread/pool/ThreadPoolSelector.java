@@ -4,6 +4,4 @@ public interface ThreadPoolSelector {
 
 	int selectPool();
 
-	void setPoolsState(PoolState[] poolStates);
-
 }
