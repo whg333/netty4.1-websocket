@@ -26,7 +26,7 @@ public class Player {
 		;
 	}
 	
-	private final Channel channel;
+	private final ChannelHandlerContext ctx;
 	
 	private AtomicReference<NetState> userNet = new AtomicReference<Player.NetState>();
 	private AtomicLong lastUpdateHeart = new AtomicLong();
@@ -37,14 +37,14 @@ public class Player {
 	private UserInfo userInfo;
 	
 	public Player(ChannelHandlerContext ctx) {
-		this.channel = ctx.channel();
-		this.channel.attr(key).set(this);
-		this.userNet.set(NetState.connect);
-		this.lastUpdateHeart.set(TimeUtil.currentTimeMillis());
+		this.ctx = ctx;
+		ctx.channel().attr(key).set(this);
+		userNet.set(NetState.connect);
+		lastUpdateHeart.set(TimeUtil.currentTimeMillis());
 	}
 	
 	public int getPlayerId() {
-		return channel.hashCode();
+		return ctx.channel().hashCode();
 	}
 	
 	public boolean isConnect(){
@@ -69,14 +69,14 @@ public class Player {
 	}
 	
 	public void write(Object obj){
-		if(channel == null || !channel.isOpen() || !isConnect()){
+		if(ctx == null || !isConnect()){
 			return;
 		}
-		channel.writeAndFlush(obj);
+		ctx.writeAndFlush(obj);
 	}
 	
 	public void destory() {
-		channel.attr(key).set(null);
+		ctx.channel().attr(key).set(null);
 		Assert.isTrue(userNet.compareAndSet(NetState.connect, NetState.disconnect));
 	}
 	

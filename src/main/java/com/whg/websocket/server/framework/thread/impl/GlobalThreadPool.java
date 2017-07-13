@@ -25,7 +25,7 @@ public class GlobalThreadPool implements ThreadPool {
 		
 		pools = new BusinessThreadPool[poolNum];
 		for (int i = 0; i < poolNum; i++) {
-			pools[i] = new BusinessThreadPool(minThreadNum, maxThreadNum, queueTaskNum, name + "-business-" + i + "-");
+			pools[i] = new BusinessThreadPool(minThreadNum, maxThreadNum, queueTaskNum, name + (i+1) + "-");
 		}
 		selector = new TakeTurnPoolSelector(poolNum);
 	}

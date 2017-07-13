@@ -36,15 +36,15 @@ public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel
 
     private final SslContext sslCtx;
     
+    private final WebSocketJsonEncoder wsJsonEncoder;
     private final WebSocketIndexPageHandler wsIndexHandler;
     private final WebSocketFrameHandler wsFrameHandler;
-    private final WebSocketJsonEncoder wsJsonEncoder;
 
     public WebSocketServerInitializer(SslContext sslCtx, ApplicationContext ac) {
         this.sslCtx = sslCtx;
+        this.wsJsonEncoder = new WebSocketJsonEncoder();
         this.wsIndexHandler = new WebSocketIndexPageHandler(WEBSOCKET_PATH);
         this.wsFrameHandler = new WebSocketFrameHandler(ac);
-        this.wsJsonEncoder = new WebSocketJsonEncoder();
     }
 
     @Override
@@ -53,14 +53,18 @@ public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel
         if (sslCtx != null) {
             pipeline.addLast(sslCtx.newHandler(ch.alloc()));
         }
+        
         pipeline.addLast(new HttpServerCodec());
         pipeline.addLast(new HttpObjectAggregator(65536));
         pipeline.addLast(new WebSocketServerCompressionHandler());
         pipeline.addLast(new WebSocketServerProtocolHandler(WEBSOCKET_PATH, null, true));
         
-        pipeline.addLast(wsIndexHandler);
-        pipeline.addLast(wsFrameHandler);
+        //必须把encoder的添加放在handler的前面，否则使用ctx.write的话就找不到encoder了，
+        //只能使用channle.write从尾部一直找到头部，方可找到encoder
+        pipeline.addLast("encoder", wsJsonEncoder);
         
-        pipeline.addLast(wsJsonEncoder);
+        pipeline.addLast("index", wsIndexHandler);
+        pipeline.addLast("handler", wsFrameHandler);
+        
     }
 }
