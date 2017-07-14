@@ -35,7 +35,7 @@ function send(message) {
 }
 </script>
 <form onsubmit="return false;">
-<input size="122x" type="text" name="message" value="{'s':'userService','m':'login','args':['whg','test']}"/><input type="button" value="Send Web Socket Data"
+<input size="122px" type="text" name="message" value="{'s':'userService','m':'login','args':['whg','test']}"/><input type="button" value="Send Web Socket Data"
        onclick="send(this.form.message.value)" />
 <h3>Output</h3>
 <textarea id="responseText" style="width:1000px;height:450px;"></textarea>

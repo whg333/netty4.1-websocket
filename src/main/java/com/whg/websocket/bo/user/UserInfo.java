@@ -13,5 +13,9 @@ public class UserInfo {
 	public long getUserId() {
 		return user.getId();
 	}
+	
+	public String getUserName() {
+		return user.getName();
+	}
 
 }

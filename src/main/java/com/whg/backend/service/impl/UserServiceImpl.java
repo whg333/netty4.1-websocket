@@ -1,18 +1,19 @@
 package com.whg.backend.service.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.whg.backend.bo.user.User;
 import com.whg.backend.service.UserService;
+import com.whg.backend.vo.s2c.room.RoomS2CVO;
+import com.whg.backend.vo.s2c.user.UserS2CVO;
 import com.whg.util.annotation.GlobalScope;
-import com.whg.util.exception.BusinessException;
-import com.whg.util.exception.ErrorCode;
+import com.whg.websocket.bo.user.UserInfo;
 import com.whg.websocket.server.framework.Player;
+import com.whg.websocket.server.framework.Room;
+import com.whg.websocket.server.framework.RoomContext;
 
 @GlobalScope
 @Service("userService")
@@ -20,28 +21,24 @@ public class UserServiceImpl implements UserService {
 
 	private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 	
+	@Autowired
+	private RoomContext roomContext;
+	
 	@Override
-	public Map<String, Object> login(Player player, String openid, String token) {
+	public void login(Player player, String openid, String token) {
 		logger.info("login({}, {})", openid, token);
-		Map<String, Object> result = new HashMap<String, Object>();
-		result.put("user", new User(1001, "whg"));
-		return result;
+		User user = new User(1001, "whg");
+		UserS2CVO userMsg = new UserS2CVO(user);
+		player.fill(user);
+		player.write(userMsg);
 	}
 
 	@Override
-	public Map<String, Object> createRoom(Player player, int roomType) {
+	public void createRoom(Player player, int roomType) {
 		logger.info("createRoom({}, {})", player, roomType);
-		Map<String, Object> result = new HashMap<String, Object>();
-		//return result;
-		throw new BusinessException(ErrorCode.BUILD_BUILDING_CAN_NOT_LEVEL_UP_IN_IMPAIRED);
-	}
-
-	@Override
-	public Map<String, Object> joinRoom(Player player, int roomNumber) {
-		logger.info("joinRoom({}, {})", player, roomNumber);
-		Map<String, Object> result = new HashMap<String, Object>();
-		//return result;
-		throw new IllegalArgumentException("不可能出现的情况");
+		Room room = roomContext.newRoom(player);
+		RoomS2CVO roomMsg = new RoomS2CVO(room);
+		player.write(roomMsg);
 	}
 
 }

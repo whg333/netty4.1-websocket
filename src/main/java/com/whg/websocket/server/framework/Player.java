@@ -6,10 +6,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.springframework.util.Assert;
 
+import com.whg.backend.bo.user.User;
 import com.whg.util.time.TimeUtil;
 import com.whg.websocket.bo.user.UserInfo;
 
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.util.AttributeKey;
@@ -34,7 +34,7 @@ public class Player {
 	
 	private Room room;
 	
-	private UserInfo userInfo;
+	private User user;
 	
 	public Player(ChannelHandlerContext ctx) {
 		this.ctx = ctx;
@@ -43,7 +43,7 @@ public class Player {
 		lastUpdateHeart.set(TimeUtil.currentTimeMillis());
 	}
 	
-	public int getPlayerId() {
+	public int getId() {
 		return ctx.channel().hashCode();
 	}
 	
@@ -80,8 +80,18 @@ public class Player {
 		Assert.isTrue(userNet.compareAndSet(NetState.connect, NetState.disconnect));
 	}
 	
-	public long getUserId(){
-		return userInfo.getUserId();
+	public void fill(User user) {
+		this.user = user;
+	}
+	
+	public User getUser(){
+		return user;
+	}
+	public long userId(){
+		return user.getId();
+	}
+	public String userName(){
+		return user.getName();
 	}
 	
 }

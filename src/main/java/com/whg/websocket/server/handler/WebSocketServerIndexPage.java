@@ -63,11 +63,11 @@ public final class WebSocketServerIndexPage {
                 '}' + NEWLINE +
                 "</script>" + NEWLINE +
                 "<form onsubmit=\"return false;\">" + NEWLINE +
-                "<input size=\"70px\" type=\"text\" name=\"message\" value=\"{'s':'userService','m':'login','args':['whg','test']}\"/>" +
+                "<input size=\"122px\" type=\"text\" name=\"message\" value=\"{'s':'userService','m':'login','args':['whg','test']}\"/>" +
                 "<input type=\"button\" value=\"Send Web Socket Data\"" + NEWLINE +
                 "       onclick=\"send(this.form.message.value)\" />" + NEWLINE +
                 "<h3>Output</h3>" + NEWLINE +
-                "<textarea id=\"responseText\" style=\"width:500px;height:300px;\"></textarea>" + NEWLINE +
+                "<textarea id=\"responseText\" style=\"width:1000px;height:450px;\"></textarea>" + NEWLINE +
                 "</form>" + NEWLINE +
                 "</body>" + NEWLINE +
                 "</html>" + NEWLINE, CharsetUtil.US_ASCII);
