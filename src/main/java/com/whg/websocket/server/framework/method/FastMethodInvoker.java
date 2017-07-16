@@ -9,25 +9,31 @@ public class FastMethodInvoker implements MethodInvoker{
 	private final String name;
 	private final Object service;
 	private final FastMethod fastMethod;
-	private final int argsLength;
+	private final Class<?>[] argTypes;
 
 	public FastMethodInvoker(String serviceName, String methodName, Object service, FastMethod fastMethod) {
 		this.name = MethodInvoker.name(serviceName, methodName);
 		this.service = service;
 		this.fastMethod = fastMethod;
-		this.argsLength = fastMethod.getParameterTypes().length;
+		this.argTypes = fastMethod.getParameterTypes();
 	}
 	
 	@Override
 	public String name(){
 		return name;
 	}
+	
+	@Override
+	public Class<?>[] argTypes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public void invoke(Object[] args) {
-		if (args.length != argsLength) {
+		if (args.length != argTypes.length) {
 			throw new IllegalArgumentException("ServiceMethod Mismatch args length! ServiceMethod=" + name
-					+ " expect " + (argsLength - 1) + " but Front Pass actual " + (args.length - 1));
+					+ " expect " + (argTypes.length - 1) + " but Front Pass actual " + (args.length - 1));
 		}
 		try {
 			fastMethod.invoke(service, args);

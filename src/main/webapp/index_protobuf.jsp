@@ -16,7 +16,9 @@
 
 		var ProtoBuf = dcodeIO.ProtoBuf, 
 			TestProtobuf = ProtoBuf.loadProtoFile('static/js/protobuf/TestProtobuf.proto').build('TestProtobuf'), 
-			TestProto = TestProtobuf.TestProto;
+			TestProto = TestProtobuf.TestProto,
+			ServiceMethodProto = TestProtobuf.ServiceMethodProto,
+			JsonProto = TestProtobuf.JsonProto;
 
 		var socket;
 		if (!window.WebSocket) {
@@ -52,8 +54,12 @@
 				return;
 			}
 			if (socket.readyState == WebSocket.OPEN) {
-				var testJson = {id:1001, name:'whg'};
-				var protobufMsg = new TestProto(testJson).toBuffer()
+				//var testJson = {id:1001, name:'whg'};
+				//var testJson = {s:'userService',m:'login',args:['whg','test']};
+				var testJson = JSON.parse(message);
+				//var protobufMsg = new TestProto(testJson).toBuffer()
+				var protobufMsg = new ServiceMethodProto(testJson).toBuffer();
+				//var protobufMsg = new JsonProto({data:message}).toBuffer();
 				socket.send(protobufMsg);
 				//socket.send(message);
 			} else {
@@ -73,7 +79,7 @@
 	</script>
 	<form onsubmit="return false;">
 		<input size="122px" type="text" name="message"
-			value="{'s':'userService','m':'login','args':['whg','test']}" /> <input
+			value='{"s":"userService","m":"login","args":["whg","test"]}' /> <input
 			type="button" value="Send Web Socket Data"
 			onclick="send(this.form.message.value)" />
 		<h3>Output</h3>

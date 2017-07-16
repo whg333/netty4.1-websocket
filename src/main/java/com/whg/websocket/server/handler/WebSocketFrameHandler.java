@@ -21,7 +21,7 @@ import org.springframework.context.ApplicationContext;
 
 import com.alibaba.fastjson.JSON;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.whg.protobuf.TestProtobuf.TestProto;
+import com.whg.protobuf.TestProtobuf.ServiceMethodProto;
 import com.whg.websocket.server.framework.Dispatcher;
 import com.whg.websocket.server.framework.GlobalContext;
 import com.whg.websocket.server.framework.Player;
@@ -104,11 +104,20 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
 //    	String text = buf.toString(CharsetUtil.UTF_8);
     	System.out.println(new String(data, CharsetUtil.UTF_8));
     	try {
-			TestProto proto = TestProto.parseFrom(data);
-			System.out.println(proto.getId()+", "+proto.getName());
-			
-			Player player =  getPlayer(ctx);
-			player.write(proto);
+//			TestProto proto = TestProto.parseFrom(data);
+//			System.out.println(proto.getId()+", "+proto.getName());
+//			
+//			Player player =  getPlayer(ctx);
+//			player.write(proto);
+    		
+    		ServiceMethodProto proto = ServiceMethodProto.parseFrom(data);
+    		System.out.println(proto.getS()+", "+proto.getM()+", "+proto.getArgsList());
+    		
+//    		JsonProto proto = JsonProto.parseFrom(data);
+//    		System.out.println(proto.getData());
+    		
+    		Player player =  getPlayer(ctx);
+    		dispatcher.dispatch(player, proto);
 		} catch (InvalidProtocolBufferException e) {
 			e.printStackTrace();
 		}

@@ -8,26 +8,31 @@ public class MethodAccessInvoker implements MethodInvoker{
 	private final Object service;
 	private final MethodAccess access;
 	private final int methodIndex;
-	private final int argsLength;
+	private final Class<?>[] argTypes;
 
 	public MethodAccessInvoker(String serviceName, String methodName, Object service, MethodAccess access) {
 		this.name = MethodInvoker.name(serviceName, methodName);
 		this.service = service;
 		this.access = access;
 		this.methodIndex = access.getIndex(methodName);
-		this.argsLength = access.getParameterTypes()[methodIndex].length;
+		this.argTypes = access.getParameterTypes()[methodIndex];
 	}
 	
 	@Override
 	public String name(){
 		return name;
 	}
+	
+	@Override
+	public Class<?>[] argTypes() {
+		return argTypes;
+	}
 
 	@Override
 	public void invoke(Object[] args) {
-		if (args.length != argsLength) {
+		if (args.length != argTypes.length) {
 			throw new IllegalArgumentException("ServiceMethod Mismatch args length! ServiceMethod=" + name
-					+ " expect " + (argsLength - 1) + " but Front Pass actual " + (args.length - 1));
+					+ " expect " + (argTypes.length - 1) + " but Front Pass actual " + (args.length - 1));
 		}
 		access.invoke(service, methodIndex, args);
 	}
