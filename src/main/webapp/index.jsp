@@ -15,11 +15,11 @@ if (window.WebSocket) {
   };
   socket.onopen = function(event) {
     var ta = document.getElementById('responseText');
-    ta.value = "Web Socket opened!";
+    ta.value = "Web Socket opened!\n";
   };
   socket.onclose = function(event) {
     var ta = document.getElementById('responseText');
-    ta.value = ta.value + "Web Socket closed"; 
+    ta.value = ta.value + "\n\nWeb Socket closed\n"; 
   };
 } else {
   alert("Your browser does not support Web Socket.");

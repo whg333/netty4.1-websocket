@@ -20,17 +20,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import com.alibaba.fastjson.JSON;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.whg.protobuf.TestProtobuf.TestProto;
 import com.whg.websocket.server.framework.Dispatcher;
 import com.whg.websocket.server.framework.GlobalContext;
 import com.whg.websocket.server.framework.Player;
 import com.whg.websocket.server.framework.request.JsonRequest;
 import com.whg.websocket.server.framework.request.Request;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
+import io.netty.util.CharsetUtil;
 
 @Sharable
 public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
@@ -54,13 +59,27 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
         // ping and pong frames already handled
 
-    	if(!(frame instanceof TextWebSocketFrame)){
-    		 String message = "unsupported frame type: " + frame.getClass().getName();
-             throw new UnsupportedOperationException(message);
+//    	if(!(frame instanceof TextWebSocketFrame || frame instanceof BinaryWebSocketFrame)){
+//    		 String message = "unsupported frame type: " + frame.getClass().getName();
+//             throw new UnsupportedOperationException(message);
+//    	}
+    	
+    	if(frame instanceof TextWebSocketFrame){
+    		handleText(ctx, (TextWebSocketFrame)frame);
+    	}else if(frame instanceof BinaryWebSocketFrame){
+    		handleBinary(ctx, (BinaryWebSocketFrame)frame);
+    	}else{
+    		String message = "unsupported frame type: " + frame.getClass().getName();
+            throw new UnsupportedOperationException(message);
     	}
+    }
+    
+    private void handleText(ChannelHandlerContext ctx, TextWebSocketFrame frame){
+    	ByteBuf buf = frame.content();
+    	System.out.println(buf.array().length); //16M的array字节数组大小！？
     	
     	// Send the uppercase string back.
-        String request = ((TextWebSocketFrame) frame).text();
+        String request = frame.text();
         logger.info("{} received {}", ctx.channel(), request);
         ctx.channel().writeAndFlush(new TextWebSocketFrame(request));
         
@@ -78,4 +97,22 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
         Request wsRequest = JSON.parseObject(request, JsonRequest.class);
         dispatcher.dispatch(player, wsRequest);
     }
+    
+    private void handleBinary(ChannelHandlerContext ctx, BinaryWebSocketFrame frame){
+    	ByteBuf buf = frame.content();
+    	System.out.println(buf.array().length); //16M的array字节数组大小！？
+    	
+    	byte[] data = new byte[buf.readableBytes()];
+    	buf.readBytes(data);
+    	System.out.println(data.length);
+//    	String text = buf.toString(CharsetUtil.UTF_8);
+    	System.out.println(new String(data, CharsetUtil.UTF_8));
+    	try {
+			TestProto proto = TestProto.parseFrom(data);
+			System.out.println(proto.getId()+", "+proto.getName());
+		} catch (InvalidProtocolBufferException e) {
+			e.printStackTrace();
+		}
+    }
+    
 }
