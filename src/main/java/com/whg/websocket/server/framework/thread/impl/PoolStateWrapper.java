@@ -2,6 +2,8 @@ package com.whg.websocket.server.framework.thread.impl;
 
 import com.whg.websocket.server.framework.thread.PoolState;
 
+//PoolState只暴露了访问数据的getXxx接口，不需要包装了
+@Deprecated
 class PoolStateWrapper implements PoolState {
 	
 	private final PoolState poolState;
