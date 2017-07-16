@@ -87,11 +87,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
     }
     
     private void handle(ChannelHandlerContext ctx, String request){
-        Player player =  ctx.channel().attr(Player.key).get();
-        if(player == null){
-        	//throw new BusinessException("not exist player!");
-        	throw new RuntimeException("not exist player!");
-        }
+        Player player =  getPlayer(ctx);
         
         //Request wsRequest = JSONUtil.fromJSON(request, JsonRequest.class);
         Request wsRequest = JSON.parseObject(request, JsonRequest.class);
@@ -110,9 +106,21 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
     	try {
 			TestProto proto = TestProto.parseFrom(data);
 			System.out.println(proto.getId()+", "+proto.getName());
+			
+			Player player =  getPlayer(ctx);
+			player.write(proto);
 		} catch (InvalidProtocolBufferException e) {
 			e.printStackTrace();
 		}
+    }
+    
+    private Player getPlayer(ChannelHandlerContext ctx){
+    	Player player =  ctx.channel().attr(Player.key).get();
+        if(player == null){
+        	//throw new BusinessException("not exist player!");
+        	throw new RuntimeException("not exist player!");
+        }
+        return player;
     }
     
 }

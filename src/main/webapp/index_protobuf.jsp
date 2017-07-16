@@ -1,4 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -23,9 +24,16 @@
 		}
 		if (window.WebSocket) {
 			socket = new WebSocket("ws://127.0.0.1:8080/websocket");
+			//这句话特别关键！将属性设为“blob”或“arraybuffer”。默认格式为“blob”（您不必在发送时校正 binaryType参数）。
+			socket.binaryType = "arraybuffer";
+			
 			socket.onmessage = function(event) {
 				var ta = document.getElementById('responseText');
-				ta.value = ta.value + '\n' + event.data
+				//var protobufResp = TestProto.decode(str2bytes(event.data));
+				var protobufResp = TestProto.decode(event.data);
+                var jsonResp = JSON.stringify(protobufResp);
+				//ta.value = ta.value + '\n' + event.data
+                ta.value = ta.value + '\n' + jsonResp
 			};
 			socket.onopen = function(event) {
 				var ta = document.getElementById('responseText');
@@ -52,11 +60,20 @@
 				alert("The socket is not open.");
 			}
 		}
+		
+		function str2bytes(str){
+            var bytes = [];
+            for (var i = 0, len = str.length; i < len; ++i) {
+                var c = str.charCodeAt(i);
+                var b = c & 0xff;
+                bytes.push(b);
+            }
+            return bytes;
+        }
 	</script>
 	<form onsubmit="return false;">
 		<input size="122px" type="text" name="message"
-			value="{'s':'userService','m':'login','args':['whg','test']}" />
-		<input
+			value="{'s':'userService','m':'login','args':['whg','test']}" /> <input
 			type="button" value="Send Web Socket Data"
 			onclick="send(this.form.message.value)" />
 		<h3>Output</h3>

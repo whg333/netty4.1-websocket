@@ -20,6 +20,7 @@ import org.springframework.context.ApplicationContext;
 import com.whg.websocket.server.handler.WebSocketFrameHandler;
 import com.whg.websocket.server.handler.WebSocketIndexPageHandler;
 import com.whg.websocket.server.handler.WebSocketJsonEncoder;
+import com.whg.websocket.server.handler.WebSocketProtobufEncoder;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -36,12 +37,14 @@ public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel
 
     private final SslContext sslCtx;
     
+    private final WebSocketProtobufEncoder wsProtobufEncoder;
     private final WebSocketJsonEncoder wsJsonEncoder;
     private final WebSocketIndexPageHandler wsIndexHandler;
     private final WebSocketFrameHandler wsFrameHandler;
 
     public WebSocketServerInitializer(SslContext sslCtx, ApplicationContext ac) {
         this.sslCtx = sslCtx;
+        this.wsProtobufEncoder = new WebSocketProtobufEncoder();
         this.wsJsonEncoder = new WebSocketJsonEncoder();
         this.wsIndexHandler = new WebSocketIndexPageHandler(WEBSOCKET_PATH);
         this.wsFrameHandler = new WebSocketFrameHandler(ac);
@@ -61,7 +64,8 @@ public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel
         
         //必须把encoder的添加放在handler的前面，否则使用ctx.write的话就找不到encoder了，
         //只能使用channle.write从尾部一直找到头部，方可找到encoder
-        pipeline.addLast("encoder", wsJsonEncoder);
+        pipeline.addLast("protobufEncoder", wsProtobufEncoder);
+        pipeline.addLast("jsonEncoder", wsJsonEncoder);
         
         pipeline.addLast("index", wsIndexHandler);
         pipeline.addLast("handler", wsFrameHandler);
