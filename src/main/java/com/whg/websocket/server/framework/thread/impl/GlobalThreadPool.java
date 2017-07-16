@@ -20,7 +20,7 @@ public class GlobalThreadPool implements Executor {
 
 	public GlobalThreadPool(int poolNum, int minThreadNum, int maxThreadNum, int queueTaskNum, String name) {
 		if(poolNum <= 0){
-			throw new IllegalArgumentException("poolNum=0");
+			throw new IllegalArgumentException("thread pool num is zero !?");
 		}
 		
 		pools = new BusinessThreadPool[poolNum];
@@ -31,17 +31,19 @@ public class GlobalThreadPool implements Executor {
 
 	@Override
 	public void execute(Runnable task) {
+		Executor executor = selectExecutor();
+		executor.execute(task);
+	}
+	
+	private Executor selectExecutor(){
 		int index = pools.length == 1 ? 0 
 				: poolIndex.getAndIncrement() % pools.length;
-		Executor executor = pools[index];
-		executor.execute(task);
+		return pools[index];
 	}
 
 	public List<PoolState> getPoolStateList() {
 		List<PoolState> states = new ArrayList<PoolState>(pools.length);
 		for (int i = 0; i < pools.length; i++) {
-			//PoolState只暴露了访问数据的getXxx接口，不需要包装了
-			//states.add(new PoolStateWrapper(pools[i]));
 			states.add(pools[i]);
 		}
 		return states;
