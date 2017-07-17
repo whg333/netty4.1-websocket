@@ -19,7 +19,9 @@
 			TestProto = TestProtobuf.TestProto,
 			JsonProto = TestProtobuf.JsonProto,
 			BoProtobuf = ProtoBuf.loadProtoFile('static/js/protobuf/BoProtobuf.proto').build('BoProtobuf'),
-			RequestProto = BoProtobuf.RequestProto
+			RequestProto = BoProtobuf.RequestProto,
+			S2CProto = ProtoBuf.loadProtoFile('static/js/protobuf/S2CProtobuf.proto').build('BoProtobuf'),
+			LoginS2CVOProto = S2CProto.LoginS2CVOProto
 			;
 
 		var socket;
@@ -33,8 +35,15 @@
 			
 			socket.onmessage = function(event) {
 				var ta = document.getElementById('responseText');
+				var msg = event.data;
 				//var protobufResp = TestProto.decode(str2bytes(event.data));
-				var protobufResp = TestProto.decode(event.data);
+				
+				var dataView = new DataView(msg.slice(0, 4));
+				var responseId = dataView.getInt32(0);
+				console.log(responseId);
+				
+				//var protobufResp = TestProto.decode(event.data);
+				var protobufResp = LoginS2CVOProto.decode(msg.slice(4));
                 var jsonResp = JSON.stringify(protobufResp);
 				//ta.value = ta.value + '\n' + event.data
                 ta.value = ta.value + '\n' + jsonResp

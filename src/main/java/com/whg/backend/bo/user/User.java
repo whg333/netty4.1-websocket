@@ -1,12 +1,16 @@
 package com.whg.backend.bo.user;
 
-public class User{
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.whg.protobuf.BoProtobuf.UserProto;
+import com.whg.util.protobuf.ProtobufSerializable;
+
+public class User implements ProtobufSerializable<UserProto>{
 	
-	private String openid = "";
 	private long id;
+	private String openid = "";
 	
 	private String name;
-	private String img;
+	private String image;
 	
 	public User(){
 		
@@ -17,29 +21,56 @@ public class User{
 		this.name = name;
 	}
 	
-	public String getOpenid() {
-		return openid;
+	@Override
+	public void parseFrom(byte[] bytes) {
+		try {
+			copyFrom(UserProto.parseFrom(bytes));
+		} catch (InvalidProtocolBufferException ex) {
+			throw new IllegalArgumentException(ex);
+		}
 	}
-	public void setOpenid(String openid) {
-		this.openid = openid;
+
+	@Override
+	public void copyFrom(UserProto proto) {
+		id = proto.getId();
+		openid = proto.getOpenid();
+		name = proto.getName();
+		image = proto.getImage();
 	}
+
+	@Override
+	public byte[] toByteArray() {
+		return copyTo().toByteArray();
+	}
+
+	@Override
+	public UserProto copyTo() {
+		UserProto.Builder builder = UserProto.newBuilder();
+		builder.setId(id);
+		builder.setOpenid(openid);
+		if(name != null){
+			builder.setName(name);
+		}
+		if(image != null){
+			builder.setImage(image);
+		}
+		return builder.build();
+	}
+
 	public long getId() {
 		return id;
 	}
-	public void setId(long id) {
-		this.id = id;
+
+	public String getOpenid() {
+		return openid;
 	}
+
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getImg() {
-		return img;
-	}
-	public void setImg(String img) {
-		this.img = img;
+
+	public String getImage() {
+		return image;
 	}
 
 }

@@ -1,0 +1,10 @@
+import "BoProtobuf.proto";
+
+package BoProtobuf;
+
+option java_package = "com.whg.protobuf";
+option java_outer_classname = "S2CProtobuf";
+
+message LoginS2CVOProto{
+	optional UserProto user = 1;
+}

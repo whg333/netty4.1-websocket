@@ -8,3 +8,10 @@ message RequestProto{
 	required string m = 2;
 	repeated string args = 3;
 }
+
+message UserProto{
+	optional int64 id = 1;
+	optional string openid = 2;
+	optional string name = 3;
+	optional string image = 4;
+}

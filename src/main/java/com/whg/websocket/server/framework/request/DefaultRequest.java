@@ -42,12 +42,17 @@ public abstract class DefaultRequest implements Request{
 		
 		for(int i=0;i<argTypes.length-1;i++){
 			Class<?> clazz = argTypes[i+1];
-			Constructor<?> constructor = constructorMap.get(clazz);
-			if(constructor == null){
-				constructor = clazz.getConstructor(String.class);
-				constructorMap.put(clazz, constructor);
+			if(clazz == String.class){
+				methodArgs[i+1] = args.get(i);
+			}else{
+				Constructor<?> constructor = constructorMap.get(clazz);
+				if(constructor == null){
+					constructor = clazz.getConstructor(String.class);
+					constructorMap.put(clazz, constructor);
+				}
+				methodArgs[i+1] = constructor.newInstance(args.get(i));
 			}
-			methodArgs[i+1] = constructor.newInstance(args.get(i));
+			
 		}
 		
 		return methodArgs;

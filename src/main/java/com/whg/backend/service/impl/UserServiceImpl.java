@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.whg.backend.bo.user.User;
 import com.whg.backend.service.UserService;
 import com.whg.backend.vo.s2c.room.RoomS2CVO;
-import com.whg.backend.vo.s2c.user.UserS2CVO;
+import com.whg.backend.vo.s2c.user.LoginS2CVO;
 import com.whg.util.annotation.GlobalScope;
 import com.whg.websocket.bo.user.UserInfo;
 import com.whg.websocket.server.framework.Player;
@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
 	public void login(Player player, String openid, String token) {
 		logger.info("login({}, {})", openid, token);
 		User user = new User(1001, "whg");
-		UserS2CVO userMsg = new UserS2CVO(user);
+		LoginS2CVO userMsg = new LoginS2CVO(user);
 		player.fill(user);
 		player.write(userMsg);
 	}
