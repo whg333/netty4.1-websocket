@@ -27,7 +27,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void login(Player player, String openid, String token) {
 		logger.info("login({}, {})", openid, token);
-		User user = new User(1001, "whg");
+		long id = Integer.MAX_VALUE+1000L;
+		System.out.println(id);
+		User user = new User(id, "whg");
 		LoginS2CVO userMsg = new LoginS2CVO(user);
 		player.fill(user);
 		player.write(userMsg);

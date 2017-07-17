@@ -8,7 +8,8 @@ if (!window.WebSocket) {
   window.WebSocket = window.MozWebSocket;
 }
 if (window.WebSocket) {
-  socket = new WebSocket("ws://127.0.0.1:8080/websocket");
+  socket = new WebSocket("ws://120.132.48.219:8080/websocket");
+  //socket = new WebSocket("ws://127.0.0.1:8080/websocket");
   socket.onmessage = function(event) {
     var ta = document.getElementById('responseText');
     ta.value = ta.value + '\n' + event.data
