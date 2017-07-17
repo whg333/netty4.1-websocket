@@ -24,7 +24,7 @@ public class RoomServiceImpl implements RoomService {
 	private RoomContext roomContext;
 	
 	@Override
-	public void joinRoom(Player player, int roomId) {
+	public void joinRoom(Player player, Integer roomId) {
 		logger.info("joinRoom({}, {})", player, roomId);
 		
 		Room room = roomContext.getRoom(roomId);
@@ -38,7 +38,7 @@ public class RoomServiceImpl implements RoomService {
 	}
 
 	@Override
-	public void quitRoom(Player player, int roomId) {
+	public void quitRoom(Player player, Integer roomId) {
 		// TODO Auto-generated method stub
 
 		throw new IllegalArgumentException("不可能出现的情况");
@@ -46,7 +46,7 @@ public class RoomServiceImpl implements RoomService {
 	}
 
 	@Override
-	public void sendRoomMsg(Player player, int roomId, String msg) {
+	public void sendRoomMsg(Player player, Integer roomId, String msg) {
 		logger.info("joinRoom({}, {}, {})", player, roomId, msg);
 		Room room = roomContext.getRoom(roomId);
 		SendRoomMsgS2CVO sendRoomMsg = new SendRoomMsgS2CVO(player.userName(), msg);

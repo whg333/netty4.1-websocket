@@ -17,8 +17,10 @@
 		var ProtoBuf = dcodeIO.ProtoBuf, 
 			TestProtobuf = ProtoBuf.loadProtoFile('static/js/protobuf/TestProtobuf.proto').build('TestProtobuf'), 
 			TestProto = TestProtobuf.TestProto,
-			ServiceMethodProto = TestProtobuf.ServiceMethodProto,
-			JsonProto = TestProtobuf.JsonProto;
+			JsonProto = TestProtobuf.JsonProto,
+			BoProtobuf = ProtoBuf.loadProtoFile('static/js/protobuf/BoProtobuf.proto').build('BoProtobuf'),
+			RequestProto = BoProtobuf.RequestProto
+			;
 
 		var socket;
 		if (!window.WebSocket) {
@@ -58,7 +60,7 @@
 				//var testJson = {s:'userService',m:'login',args:['whg','test']};
 				var testJson = JSON.parse(message);
 				//var protobufMsg = new TestProto(testJson).toBuffer()
-				var protobufMsg = new ServiceMethodProto(testJson).toBuffer();
+				var protobufMsg = new RequestProto(testJson).toBuffer();
 				//var protobufMsg = new JsonProto({data:message}).toBuffer();
 				socket.send(protobufMsg);
 				//socket.send(message);

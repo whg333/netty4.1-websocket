@@ -25,8 +25,7 @@ public class FastMethodInvoker implements MethodInvoker{
 	
 	@Override
 	public Class<?>[] argTypes() {
-		// TODO Auto-generated method stub
-		return null;
+		return argTypes;
 	}
 
 	@Override

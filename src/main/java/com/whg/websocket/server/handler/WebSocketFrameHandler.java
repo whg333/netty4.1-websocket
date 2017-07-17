@@ -90,9 +90,9 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
     	
     	byte[] data = new byte[buf.readableBytes()];
     	buf.readBytes(data);
-    	System.out.println(data.length);
+//    	System.out.println(data.length);
 //    	String text = buf.toString(CharsetUtil.UTF_8);
-    	System.out.println(new String(data, CharsetUtil.UTF_8));
+//    	System.out.println(new String(data, CharsetUtil.UTF_8));
     	
     	RequestProto proto = null;
     	try {
@@ -106,7 +106,6 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
 //    		System.out.println(proto.getData());
     		
     		proto = RequestProto.parseFrom(data);
-    		System.out.println(proto.getS()+", "+proto.getM()+", "+proto.getArgsList());
 		} catch (InvalidProtocolBufferException e) {
 			e.printStackTrace();
 		}

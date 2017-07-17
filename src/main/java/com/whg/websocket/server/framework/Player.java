@@ -80,6 +80,11 @@ public class Player {
 		Assert.isTrue(userNet.compareAndSet(NetState.connect, NetState.disconnect));
 	}
 	
+	@Override
+	public String toString() {
+		return "Player [id=" + getId() + ", userId=" + userId() + ", userName=" + userName() + "]";
+	}
+
 	public void fill(User user) {
 		this.user = user;
 	}

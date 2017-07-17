@@ -8,12 +8,6 @@ message TestProto{
 	optional string name = 2;
 }
 
-message ServiceMethodProto{
-	required string s = 1;
-	required string m = 2;
-	repeated string args = 3;
-}
-
 message JsonProto{
 	required string data = 1;
 }

@@ -4,10 +4,10 @@ import com.whg.websocket.server.framework.Player;
 
 public interface RoomService {
 
-	void joinRoom(Player player, int roomId);
+	void joinRoom(Player player, Integer roomId);
 	
-	void quitRoom(Player player, int roomId);
+	void quitRoom(Player player, Integer roomId);
 	
-	void sendRoomMsg(Player player, int roomId, String msg);
+	void sendRoomMsg(Player player, Integer roomId, String msg);
 	
 }

@@ -6,6 +6,6 @@ public interface UserService {
 
 	void login(Player player, String openid, String token);
 	
-	void createRoom(Player player, int roomType);
+	void createRoom(Player player, Integer roomType);
 	
 }

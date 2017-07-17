@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void createRoom(Player player, int roomType) {
+	public void createRoom(Player player, Integer roomType) {
 		logger.info("createRoom({}, {})", player, roomType);
 		Room room = roomContext.newRoom(player);
 		RoomS2CVO roomMsg = new RoomS2CVO(room);
