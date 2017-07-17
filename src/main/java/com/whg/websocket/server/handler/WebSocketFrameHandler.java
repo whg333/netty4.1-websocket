@@ -21,11 +21,12 @@ import org.springframework.context.ApplicationContext;
 
 import com.alibaba.fastjson.JSON;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.whg.protobuf.TestProtobuf.ServiceMethodProto;
+import com.whg.protobuf.BoProtobuf.RequestProto;
 import com.whg.websocket.server.framework.Dispatcher;
 import com.whg.websocket.server.framework.GlobalContext;
 import com.whg.websocket.server.framework.Player;
 import com.whg.websocket.server.framework.request.JsonRequest;
+import com.whg.websocket.server.framework.request.ProtobufRequest;
 import com.whg.websocket.server.framework.request.Request;
 
 import io.netty.buffer.ByteBuf;
@@ -58,11 +59,6 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
         // ping and pong frames already handled
-
-//    	if(!(frame instanceof TextWebSocketFrame || frame instanceof BinaryWebSocketFrame)){
-//    		 String message = "unsupported frame type: " + frame.getClass().getName();
-//             throw new UnsupportedOperationException(message);
-//    	}
     	
     	if(frame instanceof TextWebSocketFrame){
     		handleText(ctx, (TextWebSocketFrame)frame);
@@ -79,19 +75,13 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
     	System.out.println(buf.array().length); //16M的array字节数组大小！？
     	
     	// Send the uppercase string back.
-        String request = frame.text();
-        logger.info("{} received {}", ctx.channel(), request);
-        ctx.channel().writeAndFlush(new TextWebSocketFrame(request));
-        
-        handle(ctx, request);
-    }
-    
-    private void handle(ChannelHandlerContext ctx, String request){
-        Player player =  getPlayer(ctx);
+        String text = frame.text();
+        logger.info("{} received {}", ctx.channel(), text);
+        ctx.channel().writeAndFlush(new TextWebSocketFrame(text));
         
         //Request wsRequest = JSONUtil.fromJSON(request, JsonRequest.class);
-        Request wsRequest = JSON.parseObject(request, JsonRequest.class);
-        dispatcher.dispatch(player, wsRequest);
+        Request request = JSON.parseObject(text, JsonRequest.class);
+        handle(ctx, request);
     }
     
     private void handleBinary(ChannelHandlerContext ctx, BinaryWebSocketFrame frame){
@@ -103,6 +93,8 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
     	System.out.println(data.length);
 //    	String text = buf.toString(CharsetUtil.UTF_8);
     	System.out.println(new String(data, CharsetUtil.UTF_8));
+    	
+    	RequestProto proto = null;
     	try {
 //			TestProto proto = TestProto.parseFrom(data);
 //			System.out.println(proto.getId()+", "+proto.getName());
@@ -110,17 +102,22 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
 //			Player player =  getPlayer(ctx);
 //			player.write(proto);
     		
-    		ServiceMethodProto proto = ServiceMethodProto.parseFrom(data);
-    		System.out.println(proto.getS()+", "+proto.getM()+", "+proto.getArgsList());
-    		
 //    		JsonProto proto = JsonProto.parseFrom(data);
 //    		System.out.println(proto.getData());
     		
-    		Player player =  getPlayer(ctx);
-    		dispatcher.dispatch(player, proto);
+    		proto = RequestProto.parseFrom(data);
+    		System.out.println(proto.getS()+", "+proto.getM()+", "+proto.getArgsList());
 		} catch (InvalidProtocolBufferException e) {
 			e.printStackTrace();
 		}
+    	
+    	Request request  = new ProtobufRequest(proto);
+    	handle(ctx, request);
+    }
+    
+    private void handle(ChannelHandlerContext ctx, Request request){
+    	Player player =  getPlayer(ctx);
+		dispatcher.dispatch(player, request);
     }
     
     private Player getPlayer(ChannelHandlerContext ctx){

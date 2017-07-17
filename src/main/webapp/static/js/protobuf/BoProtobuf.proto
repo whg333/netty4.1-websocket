@@ -1,0 +1,10 @@
+package BoProtobuf;
+
+option java_package = "com.whg.protobuf";
+option java_outer_classname = "BoProtobuf";
+
+message RequestProto{
+	required string s = 1;
+	required string m = 2;
+	repeated string args = 3;
+}

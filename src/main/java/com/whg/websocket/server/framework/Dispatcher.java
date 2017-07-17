@@ -3,7 +3,6 @@ package com.whg.websocket.server.framework;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,12 +13,13 @@ import org.springframework.util.Assert;
 
 import com.alibaba.fastjson.JSON;
 import com.esotericsoftware.reflectasm.MethodAccess;
-import com.whg.protobuf.TestProtobuf.ServiceMethodProto;
 import com.whg.util.annotation.GlobalScope;
 import com.whg.websocket.server.framework.exception.ExceptionHandler;
 import com.whg.websocket.server.framework.method.FastMethodInvoker;
 import com.whg.websocket.server.framework.method.MethodAccessInvoker;
 import com.whg.websocket.server.framework.method.MethodInvoker;
+import com.whg.websocket.server.framework.request.JsonRequest;
+import com.whg.websocket.server.framework.request.ProtobufRequest;
 import com.whg.websocket.server.framework.request.Request;
 import com.whg.websocket.server.framework.thread.impl.GlobalThreadPool;
 
@@ -89,11 +89,6 @@ public class Dispatcher {
 	}
 
 	private void doDispatch(Player player, Request request) {
-		Object[] srcArgs = request.args();
-		Object[] destArgs = new Object[srcArgs.length + 1];
-		System.arraycopy(srcArgs, 0, destArgs, 1, srcArgs.length);
-		destArgs[0] = player;
-
 		String serviceMethod = request.serviceMethod();
 		MethodInvoker methodInvoker = methodInvokerMap.get(serviceMethod);
 		if (methodInvoker == null) {
@@ -101,60 +96,24 @@ public class Dispatcher {
 		}
 		
 		//TODO 暂时别注掉，主要用于调试，验证前端调用的接口
-		//System.err.println(JSONUtil.toJSONwithOutNullProp(wsRequest)+" --> "+serviceMethod);
-		System.err.println(JSON.toJSONString(request)+" --> "+methodInvoker.name());
-		
-		try {
-			methodInvoker.invoke(destArgs);
-		} catch (Exception e) {
-			exceptionHandler.handleException(player, e);
+		if(request instanceof JsonRequest){
+			//System.err.println(JSONUtil.toJSONwithOutNullProp(wsRequest)+" --> "+serviceMethod);
+			System.err.println(JSON.toJSONString(request)+" --> "+methodInvoker.name());
+		}else{
+			System.err.println((ProtobufRequest)request+" --> "+methodInvoker.name());
 		}
-	}
-	
-	public void dispatch(Player player, ServiceMethodProto request){
-		globalThreadPool.execute(new Runnable(){
-			@Override
-			public void run() {
-				doDispatch(player, request);
-			}
-		});
-	}
-	
-	private void doDispatch(Player player, ServiceMethodProto request) {
-		String serviceMethod = MethodInvoker.name(request.getS(), request.getM());
-		MethodInvoker methodInvoker = methodInvokerMap.get(serviceMethod);
-		if (methodInvoker == null) {
-			throw new UnsupportedOperationException("Unsupported methodInvoker:"+serviceMethod);
-		}
-		
-		//TODO 暂时别注掉，主要用于调试，验证前端调用的接口
-		//System.err.println(JSONUtil.toJSONwithOutNullProp(wsRequest)+" --> "+serviceMethod);
-		//System.err.println(JSON.toJSONString(request)+" --> "+methodInvoker.name());
 		
 		Class<?>[] argTypes = methodInvoker.argTypes();
-		if(argTypes.length-1 != request.getArgsCount()){
+		if(argTypes.length-1 != request.argsCount()){
 			throw new UnsupportedOperationException("Unsupported methodInvoker:"+serviceMethod);
 		}
 		
-		Object[] args = new Object[argTypes.length];
-		args[0] = player;
-		List<String> argStrList = request.getArgsList();
 		try {
-			for(int i=0;i<argTypes.length-1;i++){
-				Class<?> clazz = argTypes[i+1];
-				//TODO 缓存基础对象类型的String构造器
-				args[i+1] = clazz.getConstructor(String.class).newInstance(argStrList.get(i));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
-		
-		
-		try {
+			Object[] args = request.methodArgs(player, argTypes);
 			methodInvoker.invoke(args);
 		} catch (Exception e) {
 			exceptionHandler.handleException(player, e);
 		}
 	}
-
+	
 }
