@@ -38,12 +38,12 @@
 				var msg = event.data;
 				//var protobufResp = TestProto.decode(str2bytes(event.data));
 				
-				var dataView = new DataView(msg.slice(0, 4));
-				var responseId = dataView.getInt32(0);
+				var dataView = new DataView(msg.slice(0, 2));
+				var responseId = dataView.getInt16(0);
 				console.log(responseId);
 				
 				//var protobufResp = TestProto.decode(event.data);
-				var protobufResp = LoginS2CVOProto.decode(msg.slice(4));
+				var protobufResp = LoginS2CVOProto.decode(msg.slice(2));
                 var jsonResp = JSON.stringify(protobufResp);
 				//ta.value = ta.value + '\n' + event.data
                 ta.value = ta.value + '\n' + jsonResp

@@ -19,8 +19,8 @@ public class WebSocketProtoResponseEncoder extends MessageToMessageEncoder<Proto
 	@Override
 	protected void encode(ChannelHandlerContext ctx, ProtobufResponse msg, List<Object> out) throws Exception {
 		byte[] data = msg.toByteArray();
-		ByteBuf buf = Unpooled.buffer(Integer.BYTES+data.length);
-		buf.writeInt(1669);
+		ByteBuf buf = Unpooled.buffer(Short.BYTES+data.length);
+		buf.writeShort(1669);
 		buf.writeBytes(data);
 		out.add(new BinaryWebSocketFrame(buf));
 		System.out.println(Arrays.toString(buf.array()));
