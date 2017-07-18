@@ -29,8 +29,8 @@
 			window.WebSocket = window.MozWebSocket;
 		}
 		if (window.WebSocket) {
-			socket = new WebSocket("ws://120.132.48.219:8080/websocket");
-			//socket = new WebSocket("ws://127.0.0.1:8080/websocket");
+			//socket = new WebSocket("ws://120.132.48.219:8080/websocket");
+			socket = new WebSocket("ws://127.0.0.1:8080/websocket");
 			//这句话特别关键！将属性设为“blob”或“arraybuffer”。默认格式为“blob”（您不必在发送时校正 binaryType参数）。
 			socket.binaryType = "arraybuffer";
 			
@@ -39,12 +39,28 @@
 				var msg = event.data;
 				//var protobufResp = TestProto.decode(str2bytes(event.data));
 				
-				var dataView = new DataView(msg.slice(0, 2));
-				var responseId = dataView.getInt16(0);
+				var hearderBytes = msg.slice(0, 2);
+				var bodyBytes = msg.slice(2);
+				
+				var begin = Date.parse(new Date());
+				console.log("begin="+begin);
+				var responseId;
+				for(var i=0;i<1000000;i++){
+					var dataView = new DataView(hearderBytes);
+					responseId = dataView.getInt16(0)
+				}
+				var end = Date.parse(new Date());
+				console.log("end="+end+", 1 consume "+(end-begin));
 				console.log(responseId);
 				
 				//var protobufResp = TestProto.decode(event.data);
-				var protobufResp = LoginS2CVOProto.decode(msg.slice(2));
+				begin = Date.parse(new Date());
+				var protobufResp;
+				for(var j=0;j<1000000;j++){
+					protobufResp = LoginS2CVOProto.decode(bodyBytes);
+				}
+				end = Date.parse(new Date());
+				console.log("end="+end+", 2 consume "+(end-begin));
 				console.log(protobufResp.user.id);
 				console.log(protobufResp.user.id.toString());
                 var jsonResp = JSON.stringify(protobufResp);
