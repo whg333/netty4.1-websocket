@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
  * @author wanghg
  * @date 2017年5月5日 下午5:32:57
  */
-public class JSONUtil {
+public class JsonUtil {
 	
 	private static final ObjectMapper om = new ObjectMapper();
 	private static final ObjectMapper ignoreUnknownPropertiesObjectMapper = new ObjectMapper();

@@ -1,6 +1,7 @@
 package com.whg.backend.bo.user;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.whg.backend.bo.BoFactory;
 import com.whg.protobuf.BoProtobuf.UserProto;
 import com.whg.websocket.server.framework.protobuf.ProtobufSerializable;
 
@@ -21,6 +22,9 @@ public class User implements ProtobufSerializable<UserProto>{
 		this.name = name;
 	}
 	
+	public User(BoFactory boFactory, byte[] bytes) {
+	}
+
 	@Override
 	public void parseFrom(byte[] bytes) {
 		try {
@@ -71,6 +75,10 @@ public class User implements ProtobufSerializable<UserProto>{
 
 	public String getImage() {
 		return image;
+	}
+
+	public boolean refresh() {
+		return false;
 	}
 
 }

@@ -31,7 +31,7 @@ public abstract class JsonData<T>{
 		String jsonStr = IOUtils.toString(input);
 		Assert.isTrue(!StringUtil.isEmpty(jsonStr));
 		//logger.info(jsonStr);
-		data = JSONUtil.fromJSON(jsonStr, clazz);
+		data = JsonUtil.fromJSON(jsonStr, clazz);
 		initForEach();
     }
 	

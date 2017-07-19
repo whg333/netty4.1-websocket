@@ -1,0 +1,28 @@
+package ToolProtobuf;
+
+option java_package = "com.whg.protobuf";
+option java_outer_classname = "ToolProtobuf";
+
+message BytesListProto {
+	repeated bytes elements = 1;
+}
+
+message IntBitProto{
+	optional int32 bit = 1;
+}
+
+message IntKeyIntValueProto{
+	optional int32 key = 1;
+	optional int32 value = 2;
+}
+
+message StrKeyIntValueProto{
+	optional string key = 1;
+	optional int32 value = 2;
+}
+
+message LongKeyIntValueProto{
+	optional int64 key = 1;
+	optional int32 value = 2;
+	optional string extra = 3;
+}

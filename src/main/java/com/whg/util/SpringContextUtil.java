@@ -1,4 +1,4 @@
-package com.whg.web;
+package com.whg.util;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

@@ -2,14 +2,14 @@ package com.whg.web;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.dom4j.DocumentException;
 import org.springframework.context.ApplicationContext;
 
 import com.whg.backend.bo.Base;
 import com.whg.backend.bo.BoFactory;
+import com.whg.util.Constant;
+import com.whg.util.Log4jProperties;
 import com.whg.util.exception.ErrorCode;
 import com.whg.websocket.server.WebSocketServer;
 

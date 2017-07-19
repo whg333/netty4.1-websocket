@@ -1,4 +1,4 @@
-package com.whg.web;
+package com.whg.util;
 
 import java.io.IOException;
 import java.util.Arrays;
