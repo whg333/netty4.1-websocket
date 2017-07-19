@@ -2,7 +2,7 @@ package com.whg.backend.bo.user;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.whg.protobuf.BoProtobuf.UserProto;
-import com.whg.util.protobuf.ProtobufSerializable;
+import com.whg.websocket.server.framework.protobuf.ProtobufSerializable;
 
 public class User implements ProtobufSerializable<UserProto>{
 	
