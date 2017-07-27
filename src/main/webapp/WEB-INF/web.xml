@@ -44,7 +44,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>spring-web</servlet-name>
-		<url-pattern>*.cc</url-pattern> 
+		<url-pattern>*.qp</url-pattern> 
 	</servlet-mapping>
 
 	<!--
