@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSON;
 import com.whg.websocket.server.framework.request.JsonRequest;
 
 @Controller
@@ -25,9 +26,10 @@ public class ServiceController {
 	}
 	
 	@RequestMapping(value="/dispatch2")
-	public Map<String, Object> dispatch2(@RequestParam String a){
+	public Map<String, Object> dispatch2(@RequestParam String request){
 		Map<String, Object> result = new HashMap<String, Object>();
-		result.put("a", a);
+		result.put("request", JSON.parseObject(request, JsonRequest.class));
+		result.put("status", 200);
 		return result;
 	}
 	
