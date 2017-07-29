@@ -9,12 +9,12 @@ import com.whg.backend.service.RoomService;
 import com.whg.backend.vo.s2c.room.JoinRoomS2CVO;
 import com.whg.backend.vo.s2c.room.RoomS2CVO;
 import com.whg.backend.vo.s2c.room.SendRoomMsgS2CVO;
-import com.whg.util.annotation.GlobalScope;
+import com.whg.util.annotation.WebSocketService;
 import com.whg.websocket.server.framework.Player;
 import com.whg.websocket.server.framework.Room;
 import com.whg.websocket.server.framework.RoomContext;
 
-@GlobalScope
+@WebSocketService
 @Service("roomService")
 public class RoomServiceImpl implements RoomService {
 

@@ -47,7 +47,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
     private final GlobalContext globalContext;
     
     public WebSocketFrameHandler(ApplicationContext ac) {
-		dispatcher = new Dispatcher(ac);
+		dispatcher = new WebSocketDispatcher(ac);
 		globalContext = (GlobalContext)ac.getBean("globalContext");
 	}
 	

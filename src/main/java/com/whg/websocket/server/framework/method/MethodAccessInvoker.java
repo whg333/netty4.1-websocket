@@ -29,12 +29,12 @@ public class MethodAccessInvoker implements MethodInvoker{
 	}
 
 	@Override
-	public void invoke(Object[] args) {
+	public Object invoke(Object[] args) {
 		if (args.length != argTypes.length) {
 			throw new IllegalArgumentException("ServiceMethod Mismatch args length! ServiceMethod=" + name
 					+ " expect " + (argTypes.length - 1) + " but Front Pass actual " + (args.length - 1));
 		}
-		access.invoke(service, methodIndex, args);
+		return access.invoke(service, methodIndex, args);
 	}
 	
 }

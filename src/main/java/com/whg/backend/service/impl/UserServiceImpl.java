@@ -10,12 +10,12 @@ import com.whg.backend.repo.UserRepo;
 import com.whg.backend.service.UserService;
 import com.whg.backend.vo.s2c.room.RoomS2CVO;
 import com.whg.backend.vo.s2c.user.LoginS2CVO;
-import com.whg.util.annotation.GlobalScope;
+import com.whg.util.annotation.WebSocketService;
 import com.whg.websocket.server.framework.Player;
 import com.whg.websocket.server.framework.Room;
 import com.whg.websocket.server.framework.RoomContext;
 
-@GlobalScope
+@WebSocketService
 @Service("userService")
 public class UserServiceImpl implements UserService {
 

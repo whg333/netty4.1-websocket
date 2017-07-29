@@ -9,6 +9,8 @@ public interface Request {
 	String serviceMethod();
 	
 	int argsCount();
+	
+	Object[] methodArgs(Class<?>[] argTypes) throws Exception;
 	Object[] methodArgs(Player player, Class<?>[] argTypes) throws Exception;
 	
 }

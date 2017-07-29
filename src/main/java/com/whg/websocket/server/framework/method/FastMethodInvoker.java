@@ -29,15 +29,16 @@ public class FastMethodInvoker implements MethodInvoker{
 	}
 
 	@Override
-	public void invoke(Object[] args) {
+	public Object invoke(Object[] args) {
 		if (args.length != argTypes.length) {
 			throw new IllegalArgumentException("ServiceMethod Mismatch args length! ServiceMethod=" + name
 					+ " expect " + (argTypes.length - 1) + " but Front Pass actual " + (args.length - 1));
 		}
 		try {
-			fastMethod.invoke(service, args);
+			return fastMethod.invoke(service, args);
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
+			return null;
 		}
 	}
 

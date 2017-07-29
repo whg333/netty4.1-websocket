@@ -1,5 +1,6 @@
 package com.whg.websocket.server.framework;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,35 +12,27 @@ import org.springframework.cglib.reflect.FastMethod;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 
-import com.alibaba.fastjson.JSON;
 import com.esotericsoftware.reflectasm.MethodAccess;
-import com.whg.util.annotation.GlobalScope;
-import com.whg.websocket.server.framework.exception.ExceptionHandler;
 import com.whg.websocket.server.framework.method.FastMethodInvoker;
 import com.whg.websocket.server.framework.method.MethodAccessInvoker;
 import com.whg.websocket.server.framework.method.MethodInvoker;
-import com.whg.websocket.server.framework.request.JsonRequest;
-import com.whg.websocket.server.framework.request.ProtobufRequest;
 import com.whg.websocket.server.framework.request.Request;
-import com.whg.websocket.server.framework.thread.impl.GlobalThreadPool;
 
-public class Dispatcher {
-	
-	private final GlobalThreadPool globalThreadPool;
-	private final ExceptionHandler exceptionHandler;
+public abstract class Dispatcher {
 	
 	/** 是否使用ReflectASM库来执行方法调用？否的话则使用CgLib的FastMethod执行方法调用 */
-	private static final boolean useReflectASM = true;
-	private final Map<String, MethodInvoker> methodInvokerMap = new HashMap<String, MethodInvoker>();
+	protected static final boolean useReflectASM = true;
+	protected final Map<String, MethodInvoker> methodInvokerMap = new HashMap<String, MethodInvoker>();
 	
-	public Dispatcher(ApplicationContext ac) {
-		globalThreadPool = (GlobalThreadPool)ac.getBean("globalThreadPool");
-		exceptionHandler = (ExceptionHandler)ac.getBean("exceptionHandler");
-		initServiceMethodMap(ac);
+	@SuppressWarnings("unchecked")
+	public void initServiceMethod(ApplicationContext ac, Class<? extends Annotation>... annotationTypes){
+		for(Class<? extends Annotation> annotationType:annotationTypes){
+			initServiceMethod(ac, annotationType);
+		}
 	}
 	
-	private void initServiceMethodMap(ApplicationContext ac){
-		Map<String, Object> serviceMap = ac.getBeansWithAnnotation(GlobalScope.class);
+	public void initServiceMethod(ApplicationContext ac, Class<? extends Annotation> annotationType){
+		Map<String, Object> serviceMap = ac.getBeansWithAnnotation(annotationType);
 		for(Map.Entry<String, Object> entry:serviceMap.entrySet()){
 			String serviceName = entry.getKey();
 			Object service = entry.getValue();
@@ -79,41 +72,11 @@ public class Dispatcher {
 		}
 	}
 	
-	public void dispatch(Player player, Request request){
-		globalThreadPool.execute(new Runnable(){
-			@Override
-			public void run() {
-				doDispatch(player, request);
-			}
-		});
+	public Map<String, Object> dispatch(Request request){
+		throw new UnsupportedOperationException();
 	}
-
-	private void doDispatch(Player player, Request request) {
-		String serviceMethod = request.serviceMethod();
-		MethodInvoker methodInvoker = methodInvokerMap.get(serviceMethod);
-		if (methodInvoker == null) {
-			throw new UnsupportedOperationException("Unsupported methodInvoker:"+serviceMethod);
-		}
-		
-		//TODO 暂时别注掉，主要用于调试，验证前端调用的接口
-		if(request instanceof JsonRequest){
-			//System.err.println(JSONUtil.toJSONwithOutNullProp(wsRequest)+" --> "+serviceMethod);
-			System.err.println(JSON.toJSONString(request)+" --> "+methodInvoker.name());
-		}else{
-			System.err.println((ProtobufRequest)request+" --> "+methodInvoker.name());
-		}
-		
-		Class<?>[] argTypes = methodInvoker.argTypes();
-		if(argTypes.length-1 != request.argsCount()){
-			throw new UnsupportedOperationException("Unsupported methodInvoker:"+serviceMethod);
-		}
-		
-		try {
-			Object[] args = request.methodArgs(player, argTypes);
-			methodInvoker.invoke(args);
-		} catch (Exception e) {
-			exceptionHandler.handleException(player, e);
-		}
+	public void dispatch(Player player, Request request){
+		throw new UnsupportedOperationException();
 	}
 	
 }

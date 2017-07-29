@@ -6,7 +6,7 @@ public interface MethodInvoker {
 	
 	Class<?>[] argTypes();
 	
-	void invoke(Object[] args);
+	Object invoke(Object[] args);
 	
 	public static String name(String service, String method){
 		return service+"."+method;
