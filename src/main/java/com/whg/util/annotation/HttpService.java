@@ -6,9 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>描述：瞬时的annotation注解，标记不会持久化的字段；因为如果字段加上transient，则@JsonIgnore注解就使用不了了</p>
- * @author whg
- * @date 2016-3-11 下午01:53:04
+ * <p>代表处理短连接连接Http的服务类</p>
+ * @author wanghg
+ * @date 2017年7月30日 下午5:01:09
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
